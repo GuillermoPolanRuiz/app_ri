@@ -50,7 +50,19 @@ class DatabaseService {
         id INTEGER PRIMARY KEY, 
         nombre TEXT NOT NULL, 
         idSitio INTEGER NOT NULL,
-        nombreTabla TEXT NOT NULL)''',
+        nombreTabla TEXT NOT NULL,
+        recaudacion TEXT NOT NULL,
+        fechaUltimaRec TEXT,
+        BCincuenta INTEGER,
+        BVeinte INTEGER,
+        BDiez INTEGER,
+        BCinco INTEGER,
+        MDos INTEGER,
+        MUno INTEGER,
+        MCincuenta INTEGER,
+        MVeinte INTEGER,
+        MDiez INTEGER
+        )''',
     );
 
     await db.execute(
@@ -61,11 +73,6 @@ class DatabaseService {
     await db.execute(
       '''INSERT INTO Salones(
         id, nombre, ubic) VALUES (1, 'Salón Sarriguren', 'Sarriguren')''',
-    );
-
-    await db.execute(
-      '''INSERT INTO Maquinas(
-        id, nombre, idSitio, nombreTabla) VALUES (1, 'Maquina Prueba', 2, 'Bares')''',
     );
   }
 
@@ -95,6 +102,14 @@ class DatabaseService {
       maquina.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+  }
+
+  Future<int> getCountMaquina() async {
+    final db = await _databaseService.database;
+    List<Map> list = await db.rawQuery('SELECT * FROM Maquinas');
+    int count = list.length;
+    
+    return count;
   }
 
   Future<List<dynamic>> getData(String text) async {

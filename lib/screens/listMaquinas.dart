@@ -19,7 +19,7 @@ class ListMaquinas extends StatefulWidget {
 class _ListMaquinasState extends State<ListMaquinas> {
   final DatabaseService _db = DatabaseService();
   late Future<List<dynamic>> future = _db.getMaquinas(widget.idSitio, widget.nombreTabla);
-  late int total;
+  late int total = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,35 +52,38 @@ class _ListMaquinasState extends State<ListMaquinas> {
                                     ), Expanded(child: Column()),
                                     
                                     Container(margin: EdgeInsets.only(bottom: 30),)],),
-                                    subtitle: Text(sitio.nombre),
+                                    subtitle: Text("Recaudación: " + sitio.recaudacion.toString() + "\n" + "Fecha: " + sitio.fechaUltimaRec.toString()),
                                     trailing: Icon(Icons.navigate_next,size: 30,),
-                                    // onTap: () => {
-                                    //   Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //       builder: (context) => ListMaquinas(nombreSitio: sitio.nombre,)
-                                    //       )
-                                    //   ),
-                                    // }
+                                    onTap: () => {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                           MantenimientoMaquinas(
+                                              id: sitio.id, 
+                                              nombre: sitio.nombre,
+                                              IdSitio: widget.idSitio, 
+                                              NombreTabla: widget.nombreTabla, 
+                                              mantenimiento: true,
+                                              recaudacion: sitio.recaudacion,
+                                              BCincuenta: sitio.BCincuenta,
+                                              BVeinte: sitio.BVeinte,
+                                              BDiez: sitio.BDiez,
+                                              BCinco: sitio.BCinco,
+                                              MDos: sitio.MDos,
+                                              MUno: sitio.MUno,
+                                              MCincuenta: sitio.MCincuenta,
+                                              MVeinte: sitio.MVeinte,
+                                              MDiez: sitio.MDiez
+                                            )
+                                          )
+                                      ).then((_){
+                                        setState(() {
+                                          future = _db.getMaquinas(widget.idSitio, widget.nombreTabla);
+                                        });
+                                      }),
+                                    }
                                 ),
-                                TextButton(
-                                  onPressed: null,
-                                      style: TextButton.styleFrom(backgroundColor: AppTheme.primary),
-                                      // onPressed: ()
-                                      // => Navigator.push(
-                                      //     context,
-                                      //     MaterialPageRoute(
-                                      //       builder: (context) => Mantenimiento(name: widget.name, id: sitio.id,nombre: sitio.nombre, ubic: sitio.ubic, mantenimiento: true)
-                                      //       )
-                                      //   ).then((_){
-                                      //     setState(() {
-                                      //       future = _db.getData(widget.name);
-                                      //     });
-                                      //   }),
-                                      child: const Icon(
-                                        color: Colors.white,
-                                        Icons.edit),
-                                    )
                               ],
                             )
                       );
@@ -99,7 +102,23 @@ class _ListMaquinasState extends State<ListMaquinas> {
             => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MantenimientoMaquinas(IdSitio: widget.idSitio, NombreTabla: widget.nombreTabla, id: total + 1, nombre: '', mantenimiento: false,)
+                  builder: (context) => MantenimientoMaquinas(
+                      IdSitio: widget.idSitio, 
+                      NombreTabla: widget.nombreTabla, 
+                      id: total + 1, 
+                      nombre: '', 
+                      mantenimiento: false,
+                      recaudacion: "0",
+                      BCincuenta: 0,
+                      BVeinte: 0,
+                      BDiez: 0,
+                      BCinco: 0,
+                      MDos: 0,
+                      MUno: 0,
+                      MCincuenta: 0,
+                      MVeinte: 0,
+                      MDiez: 0
+                    )
                   )
               ).then((_){
                 setState(() {

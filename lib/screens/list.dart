@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:app_ri/screens/listData.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' as rootBundle;
 
 import '../theme/theme.dart';
 
@@ -25,7 +24,7 @@ class _ListScreen extends State<ListScreen> {
       ),
       body: Center(
          child: ListView(
-          children: const [
+          children: [
             // MyContainer(link: ListDataScreen(name: 'lugares', text: 'Lugares',), text: "Lugares", icon: Icons.place),
             // MyContainer(link: ListDataScreen(name: 'pueblos', text: 'Pueblos',), text: "Pueblos", icon: Icons.location_city),
             // MyContainer(link: ListDataScreen(name: 'casasRurales', text: 'Casas Rurales',), text: "Casas Rurales", icon: Icons.villa_rounded),
@@ -38,7 +37,23 @@ class _ListScreen extends State<ListScreen> {
             MyContainer(link: ListDataScreen(name: 'Bares'), text: 'Bares', icon: Icons.restaurant_menu),
             Padding(padding: EdgeInsets.all(60)),
             MyContainer(link: ListDataScreen(name: 'Salones'), text: 'Salones', icon: Icons.gamepad),
-
+            const SizedBox(height: 80),
+            ElevatedButton(
+              onPressed: () async {
+                //await Share.shareFiles(['data.txt']);
+              }, 
+              style: ElevatedButton.styleFrom(
+                primary: AppTheme.primary, 
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Copia de Seguridad',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+              
+            )
           ],
          ),
       ),

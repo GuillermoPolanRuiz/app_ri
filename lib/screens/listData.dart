@@ -137,7 +137,7 @@ class _ListDataScreen extends State<ListDataScreen> {
       ),
       floatingActionButton: Align(
           alignment: const Alignment(0.9, 0.9),
-          child: FloatingActionButton.large(
+          child: FloatingActionButton(
             onPressed: ()
             => Navigator.push(
                 context,

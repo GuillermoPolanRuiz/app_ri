@@ -92,6 +92,7 @@ class _MantenimientoState extends State<Mantenimiento> {
                         _db.insertSalon(new Salon(id: widget.id, nombre: name, ubic: location));
                       }
                     }
+                    _guardadoDialog();
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -107,7 +108,7 @@ class _MantenimientoState extends State<Mantenimiento> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(left: 180, right: 180, top: 50),
+                margin: EdgeInsets.only(left: 18, right: 18, top: 50),
                 child: ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -179,6 +180,35 @@ class _MantenimientoState extends State<Mantenimiento> {
               Navigator.of(context).pop();
               },
             ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _guardadoDialog() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, 
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Guardar'),
+        content: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: ListBody(
+            children: <Widget>[
+              Text("¡Se ha guardado corréctamente!")
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Aceptar'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+          )
           ],
         );
       },

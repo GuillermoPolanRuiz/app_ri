@@ -5,8 +5,10 @@ import 'package:app_ri/models/bar.dart';
 import 'package:app_ri/models/salon.dart';
 import 'package:app_ri/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../models/database.dart';
+import '../models/maquina.dart';
 
 
 class MantenimientoMaquinas extends StatefulWidget {
@@ -14,8 +16,18 @@ class MantenimientoMaquinas extends StatefulWidget {
   final String nombre;
   final int IdSitio;
   final String NombreTabla;
+  final int BCincuenta;
+  final int BVeinte;
+  final int BDiez;
+  final int BCinco;
+  final String recaudacion;
+  final int MDos;
+  final int MUno;
+  final int MCincuenta;
+  final int MVeinte;
+  final int MDiez;
   final bool mantenimiento;
-  const MantenimientoMaquinas({ super.key, required this.nombre, required this.id, required this.mantenimiento, required this.IdSitio, required this.NombreTabla});
+  const MantenimientoMaquinas({ super.key, required this.nombre, required this.id, required this.mantenimiento, required this.IdSitio, required this.NombreTabla, required this.BCincuenta, required this.BVeinte, required this.BDiez, required this.BCinco, required this.recaudacion, required this.MDos, required this.MUno, required this.MCincuenta, required this.MVeinte, required this.MDiez});
   @override
   _MantenimientoMaquinasState createState() => _MantenimientoMaquinasState();
 }
@@ -23,15 +35,22 @@ class MantenimientoMaquinas extends StatefulWidget {
 class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
   final _formKey = GlobalKey<FormState>();
   final DatabaseService _db = DatabaseService();
-  late TextEditingController controllerNombre = TextEditingController();
-  late TextEditingController controllerCantidad = TextEditingController();
-  late String nombre;
-  int billetes50 = 0;
-  int billetes20 = 0;
-  int billetes10 = 0;
-  int billetes5 = 0;
-  int cantidadTotal = 0;
+  TextEditingController controllerNombre = TextEditingController();
+  TextEditingController controllerCantidad = TextEditingController();
+  String nombre = "";
+  int BCincuenta = 0;
+  int BVeinte = 0;
+  int BDiez = 0;
+  int BCinco = 0;
+  String recaudacion = "";
+  int MDos = 0;
+  int MUno = 0;
+  int MCincuenta= 0;
+  int MVeinte = 0;
+  int MDiez = 0;
+  int total = 0;
 
+  double totalPrecio = 0.00;
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +62,11 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 40.0, right: 40.0, top: 40.0, bottom: 20.0),
-              child: Form(
-                key: _formKey,
-                child:Column(
+            Form(
+              key: _formKey,
+              child:Padding(
+                padding: const EdgeInsets.all(40.0),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     TextFormField(
@@ -60,6 +79,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Por favor, ingresa un nombre';
+
                         }
                         return null;
                       },
@@ -68,204 +88,523 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                       },
                     )
                   ],
-                ) 
+                ),
+              ) 
+            ),
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 18.0, left: 8.0, right: 8.0),
+                child: Table(
+                  border: TableBorder.symmetric(
+                  inside: BorderSide(width: 2, color: AppTheme.primary),
+                  outside: BorderSide(width: 2)),
+                  children:const [ 
+                    TableRow(
+                      children: [
+                        TableCell(
+                          child: Padding(
+                            padding: EdgeInsets.only(top:8.0, bottom: 8.0),
+                            child: Center(child: Text("BILLETES", style: TextStyle(fontWeight: FontWeight.bold),)),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                ),
               ),
             ),
             Container(
-              margin: EdgeInsets.only(left: 40, right: 40),
+              margin: const EdgeInsets.only(left: 1, right: 1),
               child: Table(
                       border: TableBorder.symmetric(
                       inside: BorderSide(width: 2, color: AppTheme.primary),
                       outside: BorderSide(width: 2)),
-                      defaultColumnWidth: FixedColumnWidth(150),
+                      columnWidths: {
+                        0:FixedColumnWidth(100),
+                        1:FixedColumnWidth(90),
+                        2:FixedColumnWidth(100)
+                      },
                       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                       children: [
                         const TableRow(
                           children: [
                             TableCell(
                               child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Center(child: Text("TIPO", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)),
+                                padding: EdgeInsets.only(top:8.0, bottom: 8.0),
+                                child: Center(child: Text("TIPO", style: TextStyle(fontWeight: FontWeight.bold),)),
                               ),
                             ),
                             TableCell(
-                              child: Center(child: Text("CANTIDAD", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)),
+                              child: Center(child: Text("CANTIDAD", style: TextStyle(fontWeight: FontWeight.bold),)),
                             ),
                             TableCell(
-                              child: Center(child: Text("ACCIONES", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)),
+                              child: Center(child: Text("ACCIONES", style: TextStyle(fontWeight: FontWeight.bold),)),
                             ),
                           ],
                         ),
                         TableRow(
                           children: [
                             TableCell(
-                              child: Center(child: Text("Billetes de 50:", style: TextStyle(fontSize: 18))),
+                              child: Center(child: Text("50", style: TextStyle(fontWeight: FontWeight.bold))),
                             ),
                             TableCell(
-                              child: Center(child: Text("$billetes50", style: TextStyle(fontSize: 18))),
-                            ),
-                            TableCell(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        primary: AppTheme.primary,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                            openDialog("Billetes de 50");
-                                        });
-                                      },
-                                      child: Icon(Icons.add_box_rounded),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        TableRow(
-                          children: [
-                            TableCell(
-                              child: Center(child: Text("Billetes de 20:", style: TextStyle(fontSize: 18))),
-                            ),
-                            TableCell(
-                              child: Center(child: Text("$billetes20", style: TextStyle(fontSize: 18))),
-                            ),
-                            TableCell(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        primary: AppTheme.primary,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          openDialog("Billetes de 20");
-                                        });
-                                      },
-                                      child: Icon(Icons.add_box_rounded),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        TableRow(
-                          children: [
-                            TableCell(
-                              child: Center(child: Text("Billetes de 10:", style: TextStyle(fontSize: 18))),
-                            ),
-                            TableCell(
-                              child: Center(child: Text("$billetes10", style: TextStyle(fontSize: 18))),
-                            ),
-                            TableCell(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        primary: AppTheme.primary,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          openDialog("Billetes de 10");
-                                        });
-                                      },
-                                      child: Icon(Icons.add_box_rounded),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        TableRow(
-                          children: [
-                            TableCell(
-                              child: Center(child: Text("Billetes de 5:", style: TextStyle(fontSize: 18))),
-                            ),
-                            TableCell(
-                              child: Center(child: Text("$billetes5", style: TextStyle(fontSize: 18))),
-                            ),
-                            TableCell(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        primary: AppTheme.primary,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          openDialog("Billetes de 5");
-                                        });
-                                      },
-                                      child: Icon(Icons.add_box_rounded),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        TableRow(
-                          children: [
-                            const TableCell(
-                              child: Center(child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text("TOTAL", style: TextStyle(fontSize: 20)),
-                              )),
-                            ),
-                            TableCell(
-                              child: Center(child: Text("$cantidadTotal" + " €", style: TextStyle(fontSize: 20))),
+                              child: Center(child: Text("$BCincuenta")),
                             ),
                             TableCell(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        primary: AppTheme.primary,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _showMyDialog();
-                                        });
-                                      },
-                                      child: Text('Limpiar', style: TextStyle(fontSize: 20),)
+                                  style: ElevatedButton.styleFrom(
+                                    primary: AppTheme.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
+                                  onPressed: () {
+                                    setState(() {
+                                        openDialog("Billetes de 50");
+                                    });
+                                  },
+                                  child: Icon(Icons.add_box_rounded),
+                                ),
                               ),
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            TableCell(
+                              child: Center(child: Text("20", style: TextStyle(fontWeight: FontWeight.bold))),
+                            ),
+                            TableCell(
+                              child: Center(child: Text("$BVeinte")),
+                            ),
+                            TableCell(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: AppTheme.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      openDialog("Billetes de 20");
+                                    });
+                                  },
+                                  child: Icon(Icons.add_box_rounded),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            TableCell(
+                              child: Center(child: Text("10", style: TextStyle(fontWeight: FontWeight.bold))),
+                            ),
+                            TableCell(
+                              child: Center(child: Text("$BDiez")),
+                            ),
+                            TableCell(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: AppTheme.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      openDialog("Billetes de 10");
+                                    });
+                                  },
+                                  child: Icon(Icons.add_box_rounded),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            TableCell(
+                              child: Center(child: Text("5", style: TextStyle(fontWeight: FontWeight.bold))),
+                            ),
+                            TableCell(
+                              child: Center(child: Text("$BCinco")),
+                            ),
+                            TableCell(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: AppTheme.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      openDialog("Billetes de 5");
+                                    });
+                                  },
+                                  child: Icon(Icons.add_box_rounded),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
                     ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 18.0, left: 8.0, right: 8.0, top: 8.0),
+                child: Table(
+                  border: TableBorder.symmetric(
+                  inside: BorderSide(width: 2, color: AppTheme.primary),
+                  outside: BorderSide(width: 2)),
+                  children:const [ 
+                    TableRow(
+                      children: [
+                        TableCell(
+                          child: Padding(
+                            padding: EdgeInsets.only(top:8.0, bottom: 8.0),
+                            child: Center(child: Text("MONEDAS", style: TextStyle(fontWeight: FontWeight.bold),)),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(left: 1, right: 1),
+              child: Table(
+                      border: TableBorder.symmetric(
+                      inside: BorderSide(width: 2, color: AppTheme.primary),
+                      outside: BorderSide(width: 2)),
+                      columnWidths: {
+                        0:FixedColumnWidth(100),
+                        1:FixedColumnWidth(90),
+                        2:FixedColumnWidth(100)
+                      },
+                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                      children: [
+                        const TableRow(
+                          children: [
+                            TableCell(
+                              child: Padding(
+                                padding: EdgeInsets.only(top:8.0, bottom: 8.0),
+                                child: Center(child: Text("TIPO", style: TextStyle(fontWeight: FontWeight.bold),)),
+                              ),
+                            ),
+                            TableCell(
+                              child: Center(child: Text("CANTIDAD", style: TextStyle(fontWeight: FontWeight.bold),)),
+                            ),
+                            TableCell(
+                              child: Center(child: Text("ACCIONES", style: TextStyle(fontWeight: FontWeight.bold),)),
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            TableCell(
+                              child: Center(child: Text("2", style: TextStyle(fontWeight: FontWeight.bold))),
+                            ),
+                            TableCell(
+                              child: Center(child: Text("$MDos")),
+                            ),
+                            TableCell(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: AppTheme.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                        openDialog("Monedas de 2");
+                                    });
+                                  },
+                                  child: Icon(Icons.add_box_rounded),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            TableCell(
+                              child: Center(child: Text("1", style: TextStyle(fontWeight: FontWeight.bold))),
+                            ),
+                            TableCell(
+                              child: Center(child: Text("$MUno")),
+                            ),
+                            TableCell(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: AppTheme.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                        openDialog("Monedas de 1");
+                                    });
+                                  },
+                                  child: Icon(Icons.add_box_rounded),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            TableCell(
+                              child: Center(child: Text("50", style: TextStyle(fontWeight: FontWeight.bold))),
+                            ),
+                            TableCell(
+                              child: Center(child: Text("$MCincuenta")),
+                            ),
+                            TableCell(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: AppTheme.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                        openDialog("Monedas de 50");
+                                    });
+                                  },
+                                  child: Icon(Icons.add_box_rounded),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            TableCell(
+                              child: Center(child: Text("20", style: TextStyle(fontWeight: FontWeight.bold))),
+                            ),
+                            TableCell(
+                              child: Center(child: Text("$MVeinte")),
+                            ),
+                            TableCell(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: AppTheme.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      openDialog("Monedas de 20");
+                                    });
+                                  },
+                                  child: Icon(Icons.add_box_rounded),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            TableCell(
+                              child: Center(child: Text("10", style: TextStyle(fontWeight: FontWeight.bold))),
+                            ),
+                            TableCell(
+                              child: Center(child: Text("$MDiez")),
+                            ),
+                            TableCell(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: AppTheme.primary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      openDialog("Monedas de 10");
+                                    });
+                                  },
+                                  child: Icon(Icons.add_box_rounded),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 18.0, left: 8.0, right: 8.0, top: 8.0),
+                child: Table(
+                  border: TableBorder.symmetric(
+                  inside: BorderSide(width: 2, color: AppTheme.primary),
+                  outside: BorderSide(width: 2)),
+                  children:const [ 
+                    TableRow(
+                      children: [
+                        TableCell(
+                          child: Padding(
+                            padding: EdgeInsets.only(top:8.0, bottom: 8.0),
+                            child: Center(child: Text("RECAUDACIÓN", style: TextStyle(fontWeight: FontWeight.bold),)),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                ),
+              ),
+            ),
+            Table(
+              border: TableBorder.symmetric(
+              inside: BorderSide(width: 2, color: AppTheme.primary),
+              outside: BorderSide(width: 2)),
+              columnWidths: {
+                0:FixedColumnWidth(100),
+                1:FixedColumnWidth(90),
+                2:FixedColumnWidth(100)
+              },
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              children: [
+                TableRow(
+                  children: [
+                    const TableCell(
+                      child: Center(child: Text("TOTAL")),
+                    ),
+                    TableCell(
+                      child: Center(child: Text("$recaudacion" + " €")),
+                    ),
+                    TableCell(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: AppTheme.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _limpiarDialog();
+                                });
+                              },
+                              child: Text('Limpiar')
+                            ),
+                      ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  recaudacion = totalPrecio.toString();
+                  if (widget.mantenimiento) {
+                    _db.updateMaquina(
+                    Maquina(
+                      id: widget.id,
+                      idSitio: widget.IdSitio, 
+                      nombre: controllerNombre.text, 
+                      nombreTabla: widget.NombreTabla, 
+                      recaudacion: recaudacion, 
+                      fechaUltimaRec: (DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString()),
+                      BCincuenta: BCincuenta,
+                      BVeinte: BVeinte,
+                      BDiez: BDiez,
+                      BCinco: BCinco,
+                      MDos: MDos,
+                      MUno: MUno,
+                      MCincuenta: MCincuenta,
+                      MVeinte: MVeinte,
+                      MDiez: MDiez
+                      ));
+                  }else{
+                    _db.insertMaquina(
+                    Maquina(
+                      id: total+1,
+                      idSitio: widget.IdSitio, 
+                      nombre: controllerNombre.text, 
+                      nombreTabla: widget.NombreTabla, 
+                      recaudacion: recaudacion, 
+                      fechaUltimaRec: (DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString()),
+                      BCincuenta: BCincuenta,
+                      BVeinte: BVeinte,
+                      BDiez: BDiez,
+                      BCinco: BCinco,
+                      MDos: MDos,
+                      MUno: MUno,
+                      MCincuenta: MCincuenta,
+                      MVeinte: MVeinte,
+                      MDiez: MDiez
+                      ));
+                  }
+                  _guardadoDialog();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                primary: AppTheme.primary, 
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Guardar',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                if (widget.mantenimiento) {
+                  _showMyDialog(widget.id, widget.nombre);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                primary: AppTheme.primary, 
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Borrar',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
             ),
           ],
         ),
@@ -275,9 +614,31 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
   @override
   void initState() {
     super.initState();
+    controllerNombre = TextEditingController(text: widget.nombre);
+    nombre = widget.nombre;
+    BCincuenta = widget.BCincuenta;
+    BVeinte = widget.BVeinte;
+    BDiez = widget.BDiez;
+    BCinco = widget.BCinco;
+    recaudacion = widget.recaudacion;
+    MDos = widget.MDos;
+    MUno = widget.MUno;
+    MCincuenta= widget.MCincuenta;
+    MVeinte = widget.MVeinte;
+    MDiez = widget.MDiez;
+    if (widget.mantenimiento) {
+      totalPrecio = double.parse(widget.recaudacion);
+    }
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      setTotal();
+    });
   }
 
-  Future<void> _showMyDialog() async {
+  void setTotal() async{
+    total = await _db.getCountMaquina();
+  }
+
+  Future<void> _limpiarDialog() async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false, 
@@ -297,11 +658,17 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
             child: const Text('Sí'),
             onPressed: () {
               setState(() {
-                  billetes50 = 0;
-                  billetes20 = 0;
-                  billetes10 = 0;
-                  billetes5 = 0;
-                  cantidadTotal = 0;
+                  BCincuenta = 0;
+                  BVeinte = 0;
+                  BDiez = 0;
+                  BCinco = 0;
+                  MDos = 0;
+                  MUno = 0;
+                  MCincuenta = 0;
+                  MVeinte = 0;
+                  MDiez = 0;
+                  recaudacion = "0";
+                  totalPrecio = 0.00;
                   Navigator.of(context).pop();
               });
             },
@@ -332,19 +699,40 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
       actions: [
         TextButton(
           onPressed: () {
+            
             setState(() {
-              
-              if (true) {
+              if (controllerCantidad.text.isEmpty || controllerCantidad.text == "") {
+                Navigator.of(context).pop();
+              }
+              else if (billetesText.contains("Billetes")) {
                 if (billetesText.contains('50')) {
-                  billetes50 = int.parse(controllerCantidad.text); 
+                  BCincuenta = int.parse(controllerCantidad.text); 
                 }else if(billetesText.contains('20')){
-                  billetes20 = int.parse(controllerCantidad.text);
+                  BVeinte = int.parse(controllerCantidad.text);
                 }else if(billetesText.contains('10')){
-                  billetes10 = int.parse(controllerCantidad.text);
+                  BDiez = int.parse(controllerCantidad.text);
                 }else if(billetesText.contains('5')){
-                  billetes5 = int.parse(controllerCantidad.text);
+                  BCinco = int.parse(controllerCantidad.text);
                 }
-                cantidadTotal = (billetes5 * 5) + (billetes10 * 10) + (billetes20 * 20) + (billetes50 * 50);
+                totalPrecio += (BCinco * 5) + (BDiez * 10) + (BVeinte * 20) + (BCincuenta * 50);
+                recaudacion = totalPrecio.toString();
+                controllerCantidad.text = "";
+                Navigator.of(context).pop();
+              }else if(billetesText.contains("Monedas")){
+                if (billetesText.contains('50')) {
+                  MCincuenta = int.parse(controllerCantidad.text); 
+                }else if(billetesText.contains('20')){
+                  MVeinte = int.parse(controllerCantidad.text);
+                }else if(billetesText.contains('10')){
+                  MDiez = int.parse(controllerCantidad.text);
+                }else if(billetesText.contains('2')){
+                  MDos = int.parse(controllerCantidad.text);
+                }else if(billetesText.contains('1')){
+                  MUno = int.parse(controllerCantidad.text);
+                }
+                totalPrecio += (MDos * 2) + (MUno * 1) + (MCincuenta * 0.50) + (MVeinte * 0.20) + (MDiez * 0.10);
+                recaudacion = totalPrecio.toString();
+                controllerCantidad.text = "";
                 Navigator.of(context).pop();
               }
             });
@@ -353,5 +741,71 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
       ],
     ) 
   );
+  
+  Future<void> _guardadoDialog() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, 
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Guardar'),
+        content: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: ListBody(
+            children: <Widget>[
+              Text("¡Se ha guardado corréctamente!")
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Aceptar'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+          )
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showMyDialog(id, name) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, 
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Eliminar registro'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text('¿Desea eliminar el siguiente registro?'),
+              Text("\n"+name),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Sí'),
+            onPressed: () {
+              setState(() {
+                _db.deleteMaquina(id);
+                Navigator.of(context).pop();
+              });
+            },
+          ),
+          TextButton(
+            child: const Text('No'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
 }
