@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:app_ri/models/bar.dart';
+import 'package:app_ri/models/myFileStorage.dart';
 import 'package:app_ri/screens/listData.dart';
 import 'package:flutter/material.dart';
 
@@ -40,7 +42,8 @@ class _ListScreen extends State<ListScreen> {
             const SizedBox(height: 80),
             ElevatedButton(
               onPressed: () async {
-                //await Share.shareFiles(['data.txt']);
+                var json = new Bar(id: 1, nombre: '', ubic: '').toJson().toString();
+                FileStorage.writeCounter('$json', 'data.json');
               }, 
               style: ElevatedButton.styleFrom(
                 primary: AppTheme.primary, 
