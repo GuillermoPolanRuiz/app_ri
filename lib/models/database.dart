@@ -21,7 +21,7 @@ class DatabaseService {
 
   Future<Database> _initDatabase() async {
     final databasePath = await getDatabasesPath();
-    final path = join(databasePath, 'flutter_sqflite_database.db');
+    final path = join(databasePath, 'AppRI.db');
     return await openDatabase(
       path,
       onCreate: _onCreate,

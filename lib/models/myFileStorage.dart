@@ -1,6 +1,7 @@
 import 'dart:io'; 
 import 'package:path_provider/path_provider.dart'; 
-import 'package:permission_handler/permission_handler.dart'; 
+import 'package:permission_handler/permission_handler.dart';
+import 'package:sqflite/sqflite.dart'; 
 
 // To save the file in the device 
 class FileStorage { 
@@ -37,10 +38,18 @@ static Future<File> writeCounter(String bytes,String name) async {
 final path = await _localPath; 
 	// Create a file for the path of 
 	// device and file name with extension 
-	File file= File('$path/$name');; 
+	File file= File('$path/$name');
+  File db = File(await getDatabasesPath() + "/AppRI.db");
+  db.copy('$path/AppRI.db');
 	print("Save file"); 
 	
 	// Write the data in the file you have created 
 	return file.writeAsString(bytes); 
 } 
+
+  static Future<void> saveDB() async { 
+    final path = await _localPath; 
+    File db = File(await getDatabasesPath() + "/AppRI.db");
+    db.copy('$path/AppRI.db');
+  } 
 }

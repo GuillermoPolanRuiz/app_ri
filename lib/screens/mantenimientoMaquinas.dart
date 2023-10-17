@@ -793,6 +793,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
               setState(() {
                 _db.deleteMaquina(id);
                 Navigator.of(context).pop();
+                Navigator.of(context).pop();
               });
             },
           ),

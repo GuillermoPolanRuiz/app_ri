@@ -42,8 +42,7 @@ class _ListScreen extends State<ListScreen> {
             const SizedBox(height: 80),
             ElevatedButton(
               onPressed: () async {
-                var json = new Bar(id: 1, nombre: '', ubic: '').toJson().toString();
-                FileStorage.writeCounter('$json', 'data.json');
+                _showMyDialog();
               }, 
               style: ElevatedButton.styleFrom(
                 primary: AppTheme.primary, 
@@ -60,6 +59,73 @@ class _ListScreen extends State<ListScreen> {
           ],
          ),
       ),
+    );
+  }
+
+
+
+  Future<void> _showMyDialog() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, 
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Copia de Seguridad'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text('¿Desea guardar todos los datos?')
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Sí'),
+            onPressed: () {
+              FileStorage.saveDB();
+              Navigator.of(context).pop();
+              _guardadoDialog();
+            },
+          ),
+          TextButton(
+            child: const Text('No'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
+  Future<void> _guardadoDialog() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, 
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Guardar'),
+        content: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: ListBody(
+            children: <Widget>[
+              Text("¡Se ha guardado corréctamente!")
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Aceptar'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )
+          ],
+        );
+      },
     );
   }
 }
