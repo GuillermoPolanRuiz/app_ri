@@ -24,9 +24,8 @@ class ListDataScreen extends StatefulWidget{
 class _ListDataScreen extends State<ListDataScreen> {
   final DatabaseService _db = DatabaseService();
   late Future<List<dynamic>> future = _db.getData(widget.name);
-  List<dynamic> filtrarBares = List.empty();
   TextEditingController tbBuscar = TextEditingController();
-  late int total;
+  late int total = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
