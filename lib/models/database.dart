@@ -65,15 +65,6 @@ class DatabaseService {
         )''',
     );
 
-    await db.execute(
-      '''INSERT INTO Bares(
-        id, nombre, ubic) VALUES (1, 'Bar Prueba', 'San Juan')''',
-    );
-
-    await db.execute(
-      '''INSERT INTO Salones(
-        id, nombre, ubic) VALUES (1, 'Salón Sarriguren', 'Sarriguren')''',
-    );
   }
 
 
