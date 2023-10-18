@@ -39,7 +39,7 @@ class _ListScreen extends State<ListScreen> {
             MyContainer(link: ListDataScreen(name: 'Bares'), text: 'Bares', icon: Icons.restaurant_menu),
             Padding(padding: EdgeInsets.all(60)),
             MyContainer(link: ListDataScreen(name: 'Salones'), text: 'Salones', icon: Icons.gamepad),
-            const SizedBox(height: 80),
+            const SizedBox(height: 100),
             ElevatedButton(
               onPressed: () async {
                 _showMyDialog();
