@@ -32,9 +32,6 @@ class _ListScreen extends State<ListScreen> {
             // MyContainer(link: ListDataScreen(name: 'casasRurales', text: 'Casas Rurales',), text: "Casas Rurales", icon: Icons.villa_rounded),
             // MyContainer(link: ListDataScreen(name: 'museos', text: 'Museos'), text: 'Museos', icon: Icons.museum_rounded),
             
-            
-            
-            // Favoritos
             Padding(padding: EdgeInsets.all(60)),
             MyContainer(link: ListDataScreen(name: 'Bares'), text: 'Bares', icon: Icons.restaurant_menu),
             Padding(padding: EdgeInsets.all(60)),
@@ -55,7 +52,11 @@ class _ListScreen extends State<ListScreen> {
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
               
-            )
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: Text('Versión 1.0'),
+            ),
           ],
          ),
       ),
