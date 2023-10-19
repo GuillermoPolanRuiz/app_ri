@@ -52,7 +52,7 @@ class _ListMaquinasState extends State<ListMaquinas> {
                                     ), Expanded(child: Column()),
                                     
                                     Container(margin: EdgeInsets.only(bottom: 30),)],),
-                                    subtitle: Text("Recaudación: " + sitio.recaudacion.toString() + "\n" + "Fecha: " + sitio.fechaUltimaRec.toString()),
+                                    subtitle: Text("Recaudación: " + sitio.recaudacion.toString() + ' €' + "\n" + "Fecha: " + sitio.fechaUltimaRec.toString()),
                                     trailing: Icon(Icons.navigate_next,size: 30,),
                                     onTap: () => {
                                       Navigator.push(

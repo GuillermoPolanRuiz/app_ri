@@ -508,7 +508,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                     ),
                     TableCell(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(6.0),
                         child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 primary: AppTheme.primary,
@@ -667,7 +667,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                   MCincuenta = 0;
                   MVeinte = 0;
                   MDiez = 0;
-                  recaudacion = "0";
+                  recaudacion = "0.00";
                   totalPrecio = 0.00;
                   Navigator.of(context).pop();
               });
@@ -704,37 +704,44 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
               if (controllerCantidad.text.isEmpty || controllerCantidad.text == "") {
                 Navigator.of(context).pop();
               }
-              else if (billetesText.contains("Billetes")) {
-                if (billetesText.contains('50')) {
-                  BCincuenta = int.parse(controllerCantidad.text); 
-                }else if(billetesText.contains('20')){
-                  BVeinte = int.parse(controllerCantidad.text);
-                }else if(billetesText.contains('10')){
-                  BDiez = int.parse(controllerCantidad.text);
-                }else if(billetesText.contains('5')){
-                  BCinco = int.parse(controllerCantidad.text);
+              else{
+                if (billetesText.contains("Billetes")) {
+                  if (billetesText.contains('50')) {
+                    BCincuenta = int.parse(controllerCantidad.text); 
+                  }else if(billetesText.contains('20')){
+                    BVeinte = int.parse(controllerCantidad.text);
+                  }else if(billetesText.contains('10')){
+                    BDiez = int.parse(controllerCantidad.text);
+                  }else if(billetesText.contains('5')){
+                    BCinco = int.parse(controllerCantidad.text);
+                  }
+                
+                }else if(billetesText.contains("Monedas")){
+                  if (billetesText.contains('50')) {
+                    MCincuenta = int.parse(controllerCantidad.text); 
+                  }else if(billetesText.contains('20')){
+                    MVeinte = int.parse(controllerCantidad.text);
+                  }else if(billetesText.contains('10')){
+                    MDiez = int.parse(controllerCantidad.text);
+                  }else if(billetesText.contains('2')){
+                    MDos = int.parse(controllerCantidad.text);
+                  }else if(billetesText.contains('1')){
+                    MUno = int.parse(controllerCantidad.text);
+                  }
                 }
-                totalPrecio += (BCinco * 5) + (BDiez * 10) + (BVeinte * 20) + (BCincuenta * 50);
-                recaudacion = totalPrecio.toString();
+                totalPrecio = (BCinco * 5) + (BDiez * 10) + (BVeinte * 20) + (BCincuenta * 50) + (MDos * 2) + (MUno * 1) + (MCincuenta * 0.50) + (MVeinte * 0.20) + (MDiez * 0.10);
+                var array;
+                array = totalPrecio.toString().split('.');
+                if (array[1].length > 2) {
+                  recaudacion = array[0] + ',' + array[1].substring(0,2);
+                }else if(array[1].length == 1){
+                  recaudacion = array[0] + ',' + array[1] + "0";
+                }else{
+                  recaudacion = array[0] + ',' + array[1];
+                }
                 controllerCantidad.text = "";
                 Navigator.of(context).pop();
-              }else if(billetesText.contains("Monedas")){
-                if (billetesText.contains('50')) {
-                  MCincuenta = int.parse(controllerCantidad.text); 
-                }else if(billetesText.contains('20')){
-                  MVeinte = int.parse(controllerCantidad.text);
-                }else if(billetesText.contains('10')){
-                  MDiez = int.parse(controllerCantidad.text);
-                }else if(billetesText.contains('2')){
-                  MDos = int.parse(controllerCantidad.text);
-                }else if(billetesText.contains('1')){
-                  MUno = int.parse(controllerCantidad.text);
-                }
-                totalPrecio += (MDos * 2) + (MUno * 1) + (MCincuenta * 0.50) + (MVeinte * 0.20) + (MDiez * 0.10);
-                recaudacion = totalPrecio.toString();
-                controllerCantidad.text = "";
-                Navigator.of(context).pop();
-              }
+            }
             });
           }, 
           child: Text('Aceptar'))

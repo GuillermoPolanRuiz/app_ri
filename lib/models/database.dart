@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_ri/models/salon.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
@@ -22,12 +24,25 @@ class DatabaseService {
   Future<Database> _initDatabase() async {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, 'AppRI.db');
-    return await openDatabase(
-      path,
-      onCreate: _onCreate,
-      version: 1,
-      onConfigure: (db) async => await db.execute('PRAGMA foreign_keys = ON'),
-    );
+    final exists = await databaseExists(path);
+    if (exists) {
+      return await openDatabase(
+        path,
+        version: 1,
+        onConfigure: (db) async => await db.execute('PRAGMA foreign_keys = ON'),
+      );  
+    }else{
+      await Directory(dirname(path)).create(recursive: true);
+      ByteData data = await rootBundle.load(join('assets', 'AppRI.db'));
+      List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      await File(path).writeAsBytes(bytes, flush: true);
+      return await openDatabase(
+        path,
+        version: 1,
+        onConfigure: (db) async => await db.execute('PRAGMA foreign_keys = ON'),
+      );  
+    }
+    
   }
 
   Future<void> _onCreate(Database db, int version) async {
