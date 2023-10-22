@@ -65,6 +65,8 @@ class _ListMaquinasState extends State<ListMaquinas> {
                                   colors: [
                                     Colors.white,
                                     Colors.white,
+                                    Colors.white,
+                                    Colors.white,
                                     secondColorBtn,
                                     colorBtn,
                                   ],

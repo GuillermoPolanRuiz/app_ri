@@ -84,8 +84,8 @@ class _ListScreen extends State<ListScreen> {
           TextButton(
             child: const Text('Sí'),
             onPressed: () {
-              // FileStorage.saveDB();
               _db.alterTable();
+              FileStorage.saveDB();
               Navigator.of(context).pop();
               _guardadoDialog();
             },
