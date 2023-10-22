@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:app_ri/models/salon.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -43,6 +44,13 @@ class DatabaseService {
       );  
     }
     
+  }
+
+  Future<dynamic> alterTable() async {
+    final db = await _databaseService.database;
+    var count = await db.execute("ALTER TABLE 'Maquinas' ADD COLUMN 'recaudacionParcial' TEXT;");
+    var count2 = await db.execute("ALTER TABLE 'Maquinas' ADD COLUMN 'recaudacionTotal' TEXT;");
+    return count;
   }
 
   Future<void> _onCreate(Database db, int version) async {

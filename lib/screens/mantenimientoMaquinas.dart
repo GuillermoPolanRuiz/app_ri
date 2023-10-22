@@ -21,13 +21,15 @@ class MantenimientoMaquinas extends StatefulWidget {
   final int BDiez;
   final int BCinco;
   final String recaudacion;
+  final String recaudacionParcial;
+  final String recaudacionTotal;
   final int MDos;
   final int MUno;
   final int MCincuenta;
   final int MVeinte;
   final int MDiez;
   final bool mantenimiento;
-  const MantenimientoMaquinas({ super.key, required this.nombre, required this.id, required this.mantenimiento, required this.IdSitio, required this.NombreTabla, required this.BCincuenta, required this.BVeinte, required this.BDiez, required this.BCinco, required this.recaudacion, required this.MDos, required this.MUno, required this.MCincuenta, required this.MVeinte, required this.MDiez});
+  const MantenimientoMaquinas({ super.key, required this.nombre, required this.id, required this.mantenimiento, required this.IdSitio, required this.NombreTabla, required this.BCincuenta, required this.BVeinte, required this.BDiez, required this.BCinco, required this.recaudacion, required this.MDos, required this.MUno, required this.MCincuenta, required this.MVeinte, required this.MDiez, required this.recaudacionParcial, required this.recaudacionTotal});
   @override
   _MantenimientoMaquinasState createState() => _MantenimientoMaquinasState();
 }
@@ -43,6 +45,8 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
   int BDiez = 0;
   int BCinco = 0;
   String recaudacion = "";
+  String recaudacionParcial = "";
+  String recaudacionTotal = "";
   int MDos = 0;
   int MUno = 0;
   int MCincuenta= 0;
@@ -51,6 +55,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
   int total = 0;
 
   double totalPrecio = 0.00;
+  Color colorTotal = Colors.green;
 
   @override
   Widget build(BuildContext context) {
@@ -491,6 +496,32 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
               border: TableBorder.symmetric(
               inside: BorderSide(width: 2, color: AppTheme.primary),
               outside: BorderSide(width: 2)),
+              columnWidths: const {
+                0:FixedColumnWidth(100),
+                1:FixedColumnWidth(190)
+              },
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              children: [
+                TableRow(
+                  children: [
+                    const TableCell(
+                      child: Center(child: Text("RECAUDACIÓN")),
+                    ),
+                    TableCell(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(child: Text("$recaudacion" + " €")),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Table(
+              border: TableBorder.symmetric(
+              inside: BorderSide(width: 2, color: AppTheme.primary),
+              outside: BorderSide(width: 2)),
               columnWidths: {
                 0:FixedColumnWidth(100),
                 1:FixedColumnWidth(90),
@@ -501,10 +532,60 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                 TableRow(
                   children: [
                     const TableCell(
-                      child: Center(child: Text("TOTAL")),
+                      child: Center(child: Text("R. PARCIAL")),
                     ),
                     TableCell(
-                      child: Center(child: Text("$recaudacion" + " €")),
+                      child: Center(child: Text("$recaudacionParcial" + " €")),
+                    ),
+                    TableCell(
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: AppTheme.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  openDialog("Parcial");
+                                });
+                              },
+                              child: Icon(Icons.add_box_rounded),
+                            ),
+                      ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Table(
+              border: TableBorder.symmetric(
+              inside: BorderSide(width: 2, color: AppTheme.primary),
+              outside: BorderSide(width: 2)),
+              columnWidths: {
+                0:FixedColumnWidth(100),
+                1:FixedColumnWidth(90),
+                2:FixedColumnWidth(100)
+              },
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              children: [
+                TableRow(
+                  children: [
+                    const TableCell(
+                      child: Center(child: Text("R.TOTAL")),
+                    ),
+                    TableCell(
+                      child: Center(child: Text(
+                        "$recaudacionTotal" + " €", 
+                        style: TextStyle(
+                          color: colorTotal,
+                          fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      ),
                     ),
                     TableCell(
                       child: Padding(
@@ -534,7 +615,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  recaudacion = totalPrecio.toString();
+                  // recaudacion = totalPrecio.toString();
                   if (widget.mantenimiento) {
                     _db.updateMaquina(
                     Maquina(
@@ -543,6 +624,8 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                       nombre: controllerNombre.text, 
                       nombreTabla: widget.NombreTabla, 
                       recaudacion: recaudacion, 
+                      recaudacionParcial: recaudacionParcial,
+                      recaudacionTotal: recaudacionTotal,
                       fechaUltimaRec: (DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString()),
                       BCincuenta: BCincuenta,
                       BVeinte: BVeinte,
@@ -562,6 +645,8 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                       nombre: controllerNombre.text, 
                       nombreTabla: widget.NombreTabla, 
                       recaudacion: recaudacion, 
+                      recaudacionParcial: recaudacionParcial,
+                      recaudacionTotal: recaudacionTotal,
                       fechaUltimaRec: (DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString()),
                       BCincuenta: BCincuenta,
                       BVeinte: BVeinte,
@@ -621,13 +706,26 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
     BDiez = widget.BDiez;
     BCinco = widget.BCinco;
     recaudacion = widget.recaudacion;
+    if (widget.recaudacionParcial.length == 0) {
+      recaudacionParcial = "0,00";  
+    }else{
+      recaudacionParcial = widget.recaudacionParcial;
+    }
+    if (widget.recaudacionTotal.length == 0) {
+      recaudacionTotal = "0,00";  
+    }else{
+      recaudacionTotal = widget.recaudacionTotal;
+      if (recaudacionTotal.contains('-')) {
+        colorTotal = Colors.red;
+      }
+    }
     MDos = widget.MDos;
     MUno = widget.MUno;
     MCincuenta= widget.MCincuenta;
     MVeinte = widget.MVeinte;
     MDiez = widget.MDiez;
     if (widget.mantenimiento) {
-      totalPrecio = double.parse(widget.recaudacion);
+      totalPrecio = double.parse(widget.recaudacion.replaceAll(',', '.'));
     }
     SchedulerBinding.instance.addPostFrameCallback((_) {
       setTotal();
@@ -667,7 +765,9 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                   MCincuenta = 0;
                   MVeinte = 0;
                   MDiez = 0;
-                  recaudacion = "0.00";
+                  recaudacion = "0,00";
+                  recaudacionParcial = "0,00";
+                  recaudacionTotal = "0,00";
                   totalPrecio = 0.00;
                   Navigator.of(context).pop();
               });
@@ -690,10 +790,11 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
     builder: (context) => AlertDialog(
       title: Text(billetesText),
       content: TextField(
+        autofocus: true,
         controller: controllerCantidad,
-        keyboardType: TextInputType. number,
-        decoration: const InputDecoration(
-          hintText: 'Ingresa cantidad'
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+          hintText: 'Ingresa cantidad',
         ),
       ),
       actions: [
@@ -703,6 +804,9 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
             setState(() {
               if (controllerCantidad.text.isEmpty || controllerCantidad.text == "") {
                 Navigator.of(context).pop();
+              }
+              else if(!validarDialog(billetesText, controllerCantidad.text)){
+
               }
               else{
                 if (billetesText.contains("Billetes")) {
@@ -729,15 +833,41 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                     MUno = int.parse(controllerCantidad.text);
                   }
                 }
+                if (billetesText.contains('Parcial')) {    
+                  if (controllerCantidad.text.contains('.')) {
+                    controllerCantidad.text = controllerCantidad.text.replaceAll('.',',');
+                  }
+                  if (!controllerCantidad.text.contains(',')) {
+                    controllerCantidad.text += ',00';
+                  }
+                  if(controllerCantidad.text.split(',')[1].length == 1){
+                    controllerCantidad.text += '0';
+                  }
+                  recaudacionParcial = controllerCantidad.text;
+                }
                 totalPrecio = (BCinco * 5) + (BDiez * 10) + (BVeinte * 20) + (BCincuenta * 50) + (MDos * 2) + (MUno * 1) + (MCincuenta * 0.50) + (MVeinte * 0.20) + (MDiez * 0.10);
                 var array;
-                array = totalPrecio.toString().split('.');
+                array = totalPrecio.toStringAsFixed(2).split('.');
                 if (array[1].length > 2) {
                   recaudacion = array[0] + ',' + array[1].substring(0,2);
                 }else if(array[1].length == 1){
                   recaudacion = array[0] + ',' + array[1] + "0";
                 }else{
                   recaudacion = array[0] + ',' + array[1];
+                }
+                var resta = (double.parse(recaudacion.replaceAll(',','.'))) - (double.parse(recaudacionParcial.replaceAll(',', '.')));
+                array = resta.toStringAsFixed(2).split('.');
+                if (array[1].length > 2) {
+                  recaudacionTotal = array[0] + ',' + array[1].substring(0,2);
+                }else if(array[1].length == 1){
+                  recaudacionTotal = array[0] + ',' + array[1] + "0";
+                }else{
+                  recaudacionTotal = array[0] + ',' + array[1];
+                }
+                if (resta < 0) {
+                  colorTotal = Colors.red;
+                }else{
+                  colorTotal = Colors.green;
                 }
                 controllerCantidad.text = "";
                 Navigator.of(context).pop();
@@ -815,5 +945,21 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
       },
     );
   }
-
+  
+  bool validarDialog(String billetesText, String text) {
+    if(controllerCantidad.text.contains(',')){
+      if(!billetesText.contains('Parcial')){
+        return false;
+      }
+      if (controllerCantidad.text.split(',')[1].length > 2) {
+        return false;
+      }
+    }
+    else if(controllerCantidad.text.contains('-')){
+      return false;
+    }
+    return true;
+  }
+  
+  
 }

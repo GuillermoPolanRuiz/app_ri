@@ -8,6 +8,8 @@ class Maquina {
   final int idSitio;
   final String nombreTabla;
   final String recaudacion;
+  final String recaudacionParcial;
+  final String recaudacionTotal;
   final String fechaUltimaRec;
   final int BCincuenta;
   final int BVeinte;
@@ -34,7 +36,9 @@ class Maquina {
     required this.MUno,
     required this.MCincuenta,
     required this.MVeinte,
-    required this.MDiez
+    required this.MDiez,
+    required this.recaudacionParcial,
+    required this.recaudacionTotal
   });
 
   // Convert a Dog into a Map. The keys must correspond to the names of the
@@ -46,6 +50,8 @@ class Maquina {
       'idSitio': idSitio,
       'nombreTabla': nombreTabla,
       'recaudacion': recaudacion,
+      'recaudacionParcial': recaudacionParcial,
+      'recaudacionTotal': recaudacionTotal,
       'fechaUltimaRec': fechaUltimaRec,
       'BCincuenta': BCincuenta,
       'BVeinte': BVeinte,
@@ -66,6 +72,8 @@ class Maquina {
       idSitio: map['idSitio'] ?? 0,
       nombreTabla: map['nombreTabla'] ?? '',
       recaudacion: map['recaudacion'] ?? '',
+      recaudacionParcial: map['recaudacionParcial'] ?? '',
+      recaudacionTotal: map['recaudacionTotal'] ?? '',
       fechaUltimaRec: map['fechaUltimaRec'] ?? '',
       BCincuenta: map['BCincuenta'] ?? 0,
       BVeinte: map['BVeinte'] ?? 0,

@@ -4,6 +4,7 @@ import 'package:app_ri/models/myFileStorage.dart';
 import 'package:app_ri/screens/listData.dart';
 import 'package:flutter/material.dart';
 
+import '../models/database.dart';
 import '../theme/theme.dart';
 
 
@@ -16,13 +17,13 @@ class ListScreen extends StatefulWidget{
 
 class _ListScreen extends State<ListScreen> {
    
-  
+  final DatabaseService _db = DatabaseService();
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inicio'),
+        title: Center(child: const Text('Inicio')),
       ),
       body: Center(
          child: ListView(
@@ -55,7 +56,7 @@ class _ListScreen extends State<ListScreen> {
             ),
             const SizedBox(height: 20),
             Center(
-              child: Text('Versión 1.0'),
+              child: Text('Versión 1.1'),
             ),
           ],
          ),
@@ -83,7 +84,8 @@ class _ListScreen extends State<ListScreen> {
           TextButton(
             child: const Text('Sí'),
             onPressed: () {
-              FileStorage.saveDB();
+              // FileStorage.saveDB();
+              _db.alterTable();
               Navigator.of(context).pop();
               _guardadoDialog();
             },

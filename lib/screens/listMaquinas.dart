@@ -20,6 +20,8 @@ class _ListMaquinasState extends State<ListMaquinas> {
   final DatabaseService _db = DatabaseService();
   late Future<List<dynamic>> future = _db.getMaquinas(widget.idSitio, widget.nombreTabla);
   late int total = 0;
+  Color colorBtn = Color.fromARGB(255, 131, 234, 135);
+  Color secondColorBtn = Color.fromARGB(255, 200, 255, 203);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,55 +38,93 @@ class _ListMaquinasState extends State<ListMaquinas> {
                     itemBuilder: (context, index) {
                       total = snapshot.data!.length;
                       final sitio = snapshot.data![index];
+                      Color colorBtn = Colors.green;
+                      if (sitio.recaudacionTotal.contains('-')) {
+                        colorBtn = Color.fromARGB(255, 231, 116, 108);
+                        secondColorBtn = Color.fromARGB(255, 255, 195, 195);
+                      }else{
+                        colorBtn = Color.fromARGB(255, 131, 234, 135);
+                        secondColorBtn = Color.fromARGB(255, 200, 255, 203);
+                      }
                       return Card(
                             key: ValueKey(sitio.id),
                             margin: const EdgeInsets.all(30),
                             color: Color.fromARGB(255, 255, 251, 251),
                             elevation: 5,
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  title: Row(children: [Text(
-                                      sitio.nombre,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                    ), Expanded(child: Column()),
-                                    
-                                    Container(margin: EdgeInsets.only(bottom: 30),)],),
-                                    subtitle: Text("Recaudación: " + sitio.recaudacion.toString() + ' €' + "\n" + "Fecha: " + sitio.fechaUltimaRec.toString()),
-                                    trailing: Icon(Icons.navigate_next,size: 30,),
-                                    onTap: () => {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                           MantenimientoMaquinas(
-                                              id: sitio.id, 
-                                              nombre: sitio.nombre,
-                                              IdSitio: widget.idSitio, 
-                                              NombreTabla: widget.nombreTabla, 
-                                              mantenimiento: true,
-                                              recaudacion: sitio.recaudacion,
-                                              BCincuenta: sitio.BCincuenta,
-                                              BVeinte: sitio.BVeinte,
-                                              BDiez: sitio.BDiez,
-                                              BCinco: sitio.BCinco,
-                                              MDos: sitio.MDos,
-                                              MUno: sitio.MUno,
-                                              MCincuenta: sitio.MCincuenta,
-                                              MVeinte: sitio.MVeinte,
-                                              MDiez: sitio.MDiez
+                            child: Container(
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3), // changes position of shadow
+                                  ),
+                                ],
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.white,
+                                    Colors.white,
+                                    secondColorBtn,
+                                    colorBtn,
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                )
+                              ),
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    title: Row(children: [Text(
+                                        sitio.nombre,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold
+                                        ),
+                                      ), Expanded(child: Column()),
+                                      Container(margin: EdgeInsets.only(bottom: 30),)],),
+                                      subtitle: Text(
+                                          "Recaudación: " + sitio.recaudacionTotal.toString() + ' €' + "\n" + "Fecha: " + sitio.fechaUltimaRec.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 14
+                                          ),
+                                        
+                                        ),
+                                      trailing: Icon(Icons.navigate_next,size: 30,),
+                                      onTap: () => {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                             MantenimientoMaquinas(
+                                                id: sitio.id, 
+                                                nombre: sitio.nombre,
+                                                IdSitio: widget.idSitio, 
+                                                NombreTabla: widget.nombreTabla, 
+                                                mantenimiento: true,
+                                                recaudacion: sitio.recaudacion,
+                                                recaudacionParcial: sitio.recaudacionParcial,
+                                                recaudacionTotal: sitio.recaudacionTotal,
+                                                BCincuenta: sitio.BCincuenta,
+                                                BVeinte: sitio.BVeinte,
+                                                BDiez: sitio.BDiez,
+                                                BCinco: sitio.BCinco,
+                                                MDos: sitio.MDos,
+                                                MUno: sitio.MUno,
+                                                MCincuenta: sitio.MCincuenta,
+                                                MVeinte: sitio.MVeinte,
+                                                MDiez: sitio.MDiez
+                                              )
                                             )
-                                          )
-                                      ).then((_){
-                                        setState(() {
-                                          future = _db.getMaquinas(widget.idSitio, widget.nombreTabla);
-                                        });
-                                      }),
-                                    }
-                                ),
-                              ],
+                                        ).then((_){
+                                          setState(() {
+                                            future = _db.getMaquinas(widget.idSitio, widget.nombreTabla);
+                                          });
+                                        }),
+                                      }
+                                  ),
+                                ],
+                              ),
                             )
                       );
                     }
@@ -108,7 +148,9 @@ class _ListMaquinasState extends State<ListMaquinas> {
                       id: total + 1, 
                       nombre: '', 
                       mantenimiento: false,
-                      recaudacion: "0",
+                      recaudacion: "0,00",
+                      recaudacionParcial: "0,00",
+                      recaudacionTotal: "0,00",
                       BCincuenta: 0,
                       BVeinte: 0,
                       BDiez: 0,

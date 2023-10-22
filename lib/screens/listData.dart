@@ -80,46 +80,67 @@ class _ListDataScreen extends State<ListDataScreen> {
                             margin: const EdgeInsets.all(30),
                             color: Color.fromARGB(255, 255, 251, 251),
                             elevation: 5,
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  title: Row(children: [Text(
-                                      sitio.nombre,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                    ), Expanded(child: Column()),
-                                    
-                                    Container(margin: EdgeInsets.only(bottom: 30),)],),
-                                    subtitle: Text(sitio.ubic),
-                                    trailing: Icon(Icons.navigate_next,size: 30,),
-                                    onTap: () => {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ListMaquinas(idSitio: sitio.id, nombreTabla: widget.name, nombreSitio: sitio.nombre,)
-                                          )
-                                      ),
-                                    }
-                                ),
-                                TextButton(
-                                      style: TextButton.styleFrom(backgroundColor: AppTheme.primary),
-                                      onPressed: ()
-                                      => Navigator.push(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3), // changes position of shadow
+                                  ),
+                                ],
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Colors.white,
+                                    Colors.white,
+                                    Color.fromARGB(255, 255, 245, 245),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                )
+                              ),
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    title: Row(children: [Text(
+                                        sitio.nombre,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      ), Expanded(child: Column()),
+                                      
+                                      Container(margin: EdgeInsets.only(bottom: 30),)],),
+                                      subtitle: Text(sitio.ubic),
+                                      trailing: Icon(Icons.navigate_next,size: 30,),
+                                      onTap: () => {
+                                        Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => Mantenimiento(name: widget.name, id: sitio.id,nombre: sitio.nombre, ubic: sitio.ubic, mantenimiento: true)
+                                            builder: (context) => ListMaquinas(idSitio: sitio.id, nombreTabla: widget.name, nombreSitio: sitio.nombre,)
                                             )
-                                        ).then((_){
-                                          setState(() {
-                                            future = _db.getData(widget.name);
-                                          });
-                                        }),
-                                      child: const Icon(
-                                        color: Colors.white,
-                                        Icons.edit),
-                                    )
-                              ],
+                                        ),
+                                      }
+                                  ),
+                                  TextButton(
+                                        style: TextButton.styleFrom(backgroundColor: AppTheme.primary),
+                                        onPressed: ()
+                                        => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => Mantenimiento(name: widget.name, id: sitio.id,nombre: sitio.nombre, ubic: sitio.ubic, mantenimiento: true)
+                                              )
+                                          ).then((_){
+                                            setState(() {
+                                              future = _db.getData(widget.name);
+                                            });
+                                          }),
+                                        child: const Icon(
+                                          color: Colors.white,
+                                          Icons.edit),
+                                      )
+                                ],
+                              ),
                             )
                       );
                     }
