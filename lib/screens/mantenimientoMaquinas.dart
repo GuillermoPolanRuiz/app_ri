@@ -14,6 +14,7 @@ import '../models/maquina.dart';
 class MantenimientoMaquinas extends StatefulWidget {
   final int id;
   final String nombre;
+  final String nombreSitio;
   final int IdSitio;
   final String NombreTabla;
   final int BCincuenta;
@@ -29,7 +30,7 @@ class MantenimientoMaquinas extends StatefulWidget {
   final int MVeinte;
   final int MDiez;
   final bool mantenimiento;
-  const MantenimientoMaquinas({ super.key, required this.nombre, required this.id, required this.mantenimiento, required this.IdSitio, required this.NombreTabla, required this.BCincuenta, required this.BVeinte, required this.BDiez, required this.BCinco, required this.recaudacion, required this.MDos, required this.MUno, required this.MCincuenta, required this.MVeinte, required this.MDiez, required this.recaudacionParcial, required this.recaudacionTotal});
+  const MantenimientoMaquinas({ super.key, required this.nombre, required this.id, required this.mantenimiento, required this.IdSitio, required this.NombreTabla, required this.BCincuenta, required this.BVeinte, required this.BDiez, required this.BCinco, required this.recaudacion, required this.MDos, required this.MUno, required this.MCincuenta, required this.MVeinte, required this.MDiez, required this.recaudacionParcial, required this.recaudacionTotal, required this.nombreSitio});
   @override
   _MantenimientoMaquinasState createState() => _MantenimientoMaquinasState();
 }
@@ -54,11 +55,18 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
   int MDiez = 0;
   int total = 0;
 
+  String pParcial = "";
+
   double totalPrecio = 0.00;
   Color colorTotal = Colors.green;
 
   @override
   Widget build(BuildContext context) {
+    if (widget.NombreTabla == "Salones") {
+      pParcial = "P. Manual";
+    }else{
+      pParcial = "R. PARCIAL";
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('Mantenimiento Máquinas'),
@@ -505,7 +513,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                 TableRow(
                   children: [
                     const TableCell(
-                      child: Center(child: Text("RECAUDACIÓN")),
+                      child: Center(child: Text("RECAUDACIÓN", style: TextStyle(fontSize: 10),)),
                     ),
                     TableCell(
                       child: Padding(
@@ -531,8 +539,8 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
               children: [
                 TableRow(
                   children: [
-                    const TableCell(
-                      child: Center(child: Text("R. PARCIAL")),
+                    TableCell(
+                      child: Center(child: Text("$pParcial", style: TextStyle(fontSize: 12),)),
                     ),
                     TableCell(
                       child: Center(child: Text("$recaudacionParcial" + " €")),
@@ -575,7 +583,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                 TableRow(
                   children: [
                     const TableCell(
-                      child: Center(child: Text("R.TOTAL")),
+                      child: Center(child: Text("R.TOTAL", style: TextStyle(fontSize: 12),)),
                     ),
                     TableCell(
                       child: Center(child: Text(
@@ -659,6 +667,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                       MDiez: MDiez
                       ));
                   }
+                  _db.updateSitioRec(widget.IdSitio, widget.NombreTabla);
                   _guardadoDialog();
                 }
               },
@@ -868,6 +877,9 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                   colorTotal = Colors.red;
                 }else{
                   colorTotal = Colors.green;
+                }
+                if (recaudacionTotal.contains('-') && widget.nombreSitio.toUpperCase().contains('CASTEJ') && widget.NombreTabla == "Salones") {
+                  recaudacionTotal = "0,00";
                 }
                 controllerCantidad.text = "";
                 Navigator.of(context).pop();

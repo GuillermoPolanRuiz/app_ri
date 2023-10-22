@@ -6,11 +6,13 @@ class Bar {
   final int id;
   final String nombre;
   final String ubic;
+  final String fechRec;
 
   Bar({
     required this.id,
     required this.nombre,
-    required this.ubic
+    required this.ubic,
+    required this.fechRec
   });
 
   // Convert a Dog into a Map. The keys must correspond to the names of the
@@ -19,7 +21,8 @@ class Bar {
     return {
       'id': id,
       'nombre': nombre,
-      'ubic': ubic
+      'ubic': ubic,
+      'fechRec': fechRec,
     };
   }
 
@@ -27,7 +30,8 @@ class Bar {
     return Bar(
       id: map['id']?.toInt() ?? 0,
       nombre: map['nombre'] ?? '',
-      ubic: map['ubic'] ?? ''
+      ubic: map['ubic'] ?? '',
+      fechRec: map['fechRec'] ?? ''
     );
   }
 

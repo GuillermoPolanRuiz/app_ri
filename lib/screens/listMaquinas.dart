@@ -10,7 +10,8 @@ class ListMaquinas extends StatefulWidget {
   final int idSitio;
   final String nombreTabla;
   final String nombreSitio;
-  const ListMaquinas({super.key, required this.nombreSitio, required this.idSitio, required this.nombreTabla});
+  final String nombreUbic;
+  const ListMaquinas({super.key, required this.nombreSitio, required this.idSitio, required this.nombreTabla, required this.nombreUbic});
 
   @override
   State<ListMaquinas> createState() => _ListMaquinasState();
@@ -26,7 +27,15 @@ class _ListMaquinasState extends State<ListMaquinas> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Maquinas ' + widget.nombreSitio),
+        title: Text(widget.nombreSitio),
+        actions: <Widget>[
+          PopupMenuButton<int>(
+              onSelected: (item) => handleClick(item),
+              itemBuilder: (context) => [
+                PopupMenuItem<int>(value: 0, child: Text('Limpiar')),
+              ],
+            ),
+        ],
         backgroundColor: AppTheme.primary, // Cambia el color de fondo de la barra de navegación
       ),
       body: FutureBuilder(
@@ -101,6 +110,7 @@ class _ListMaquinasState extends State<ListMaquinas> {
                                              MantenimientoMaquinas(
                                                 id: sitio.id, 
                                                 nombre: sitio.nombre,
+                                                nombreSitio: widget.nombreUbic,
                                                 IdSitio: widget.idSitio, 
                                                 NombreTabla: widget.nombreTabla, 
                                                 mantenimiento: true,
@@ -149,6 +159,7 @@ class _ListMaquinasState extends State<ListMaquinas> {
                       NombreTabla: widget.nombreTabla, 
                       id: total + 1, 
                       nombre: '', 
+                      nombreSitio: widget.nombreUbic, 
                       mantenimiento: false,
                       recaudacion: "0,00",
                       recaudacionParcial: "0,00",
@@ -174,5 +185,12 @@ class _ListMaquinasState extends State<ListMaquinas> {
             child: const Icon(Icons.add),
             )),
     );
+  }
+  
+  void handleClick(int item) {
+    switch (item) {
+      case 0:
+        break;
+    }
   }
 }

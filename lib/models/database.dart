@@ -46,11 +46,22 @@ class DatabaseService {
     
   }
 
-  Future<dynamic> alterTable() async {
+  // Future<dynamic> alterTable() async {
+  //   final db = await _databaseService.database;
+  //   var count = await db.execute("ALTER TABLE 'Maquinas' ADD COLUMN 'recaudacionParcial' TEXT;");
+  //   var count2 = await db.execute("ALTER TABLE 'Maquinas' ADD COLUMN 'recaudacionTotal' TEXT;");
+  //   return count;
+  // }
+
+  Future<void> limpiarTodo(int idSitio, String nombreTabla) async{
     final db = await _databaseService.database;
-    var count = await db.execute("ALTER TABLE 'Maquinas' ADD COLUMN 'recaudacionParcial' TEXT;");
-    var count2 = await db.execute("ALTER TABLE 'Maquinas' ADD COLUMN 'recaudacionTotal' TEXT;");
-    return count;
+    int updateCount = await db.rawUpdate('''
+    UPDATE Maquinas 
+    SET recaudacion = ?, recaudacionParcial = ?, recaudacionTotal = ?, BCincuenta = ?, BVeinte = ?, BDiez = ?, BCinco = ?
+    MDos = ?, MUno = ?, MCincuenta = ?, MVeinte = ?, MDiez = ?
+    WHERE idSitio = ? AND nombreTabla = ?
+    ''', 
+    ['0,00','0,00','0,00', '0', '0', '0', '0', '0', '0', '0', '0', '0', idSitio, nombreTabla]);
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -124,6 +135,41 @@ class DatabaseService {
     int count = list.length;
     
     return count;
+  }
+
+  Future<void> updateSitioRec(int idSitio, String nombreTabla) async{
+    final db = await _databaseService.database;
+    double total = 0.00;
+    String valor = "";
+     List<Map<String, dynamic>> count = await db.rawQuery('''SELECT recaudacionTotal FROM Maquinas 
+      WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
+      [DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString(), idSitio, nombreTabla]);
+
+    if (count.isNotEmpty) {
+      for (var e in count) {
+        total += double.parse(e.values.toString().replaceAll(',', '.').replaceAll('(', '').replaceAll(')', ''));
+      }
+    }
+    valor = total.toStringAsFixed(2).replaceAll('.', ',');
+    if (valor.split(',')[1].length == 1) {
+      valor += '0';
+    }
+    if (nombreTabla == "Bares") {
+      int updateCount = await db.rawUpdate('''
+      UPDATE Bares 
+      SET fechRec = ?
+      WHERE id = ?
+      ''', 
+      [valor, idSitio]);
+    }else{
+      int updateCount = await db.rawUpdate('''
+      UPDATE Salones 
+      SET fechRec = ?
+      WHERE id = ?
+      ''', 
+      [valor, idSitio]);
+    }
+
   }
 
   Future<List<dynamic>> getData(String text) async {

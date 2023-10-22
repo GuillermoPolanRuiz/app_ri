@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 
 import '../models/bar.dart';
 import '../models/database.dart';
+import '../models/maquina.dart';
 import '../theme/theme.dart';
 import 'listMaquinas.dart';
 
@@ -24,7 +25,9 @@ class ListDataScreen extends StatefulWidget{
 class _ListDataScreen extends State<ListDataScreen> {
   final DatabaseService _db = DatabaseService();
   late Future<List<dynamic>> future = _db.getData(widget.name);
+  List<Maquina> listaRecaudacionHoy = List.empty(); 
   TextEditingController tbBuscar = TextEditingController();
+  Color colorRec = Colors.green;
   late int total = 0;
   @override
   Widget build(BuildContext context) {
@@ -75,6 +78,11 @@ class _ListDataScreen extends State<ListDataScreen> {
                     itemBuilder: (context, index) {
                       total = snapshot.data!.length;
                       final sitio = snapshot.data![index];
+                      if (sitio.fechRec.contains('-')) {
+                         colorRec = Colors.red;
+                      }else{
+                        colorRec = Colors.green;
+                      }
                       return Card(
                             key: ValueKey(sitio.id),
                             margin: const EdgeInsets.all(30),
@@ -117,10 +125,25 @@ class _ListDataScreen extends State<ListDataScreen> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => ListMaquinas(idSitio: sitio.id, nombreTabla: widget.name, nombreSitio: sitio.nombre,)
+                                            builder: (context) => ListMaquinas(idSitio: sitio.id, nombreTabla: widget.name, nombreSitio: sitio.nombre, nombreUbic: sitio.ubic,)
                                             )
-                                        ),
+                                        ).then((_){
+                                            setState(() {
+                                              future = _db.getData(widget.name);
+                                            });
+                                          }),
                                       }
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                        sitio.fechRec + " €",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: colorRec
+                                        ),
+                                      ),
                                   ),
                                   TextButton(
                                         style: TextButton.styleFrom(backgroundColor: AppTheme.primary),
@@ -128,7 +151,7 @@ class _ListDataScreen extends State<ListDataScreen> {
                                         => Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => Mantenimiento(name: widget.name, id: sitio.id,nombre: sitio.nombre, ubic: sitio.ubic, mantenimiento: true)
+                                              builder: (context) => Mantenimiento(name: widget.name, id: sitio.id,nombre: sitio.nombre, ubic: sitio.ubic, fechRec: sitio.fechRec, mantenimiento: true)
                                               )
                                           ).then((_){
                                             setState(() {
@@ -151,7 +174,6 @@ class _ListDataScreen extends State<ListDataScreen> {
                 return CircularProgressIndicator();
               },
             ), 
-          
           )
         ],
       ),
@@ -162,7 +184,7 @@ class _ListDataScreen extends State<ListDataScreen> {
             => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Mantenimiento(name: widget.name,id: total+1,nombre: '', ubic: '',mantenimiento: false)
+                  builder: (context) => Mantenimiento(name: widget.name,id: total+1,nombre: '', ubic: '', fechRec: '', mantenimiento: false)
                   )
               ).then((_){
                 setState(() {
@@ -179,13 +201,7 @@ class _ListDataScreen extends State<ListDataScreen> {
   
   
 
-  List<Bar> getBares() {
-    List<Bar> _listProducts = [];
-    _db.getBares().then((value) {
-      if (value != null) value.forEach((item) => _listProducts.add(item));
-    });
-    return _listProducts == null ? [] : _listProducts;
-  }
+  
   
   @override
   void initState() {

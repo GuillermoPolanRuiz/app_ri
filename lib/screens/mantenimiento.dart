@@ -11,8 +11,9 @@ class Mantenimiento extends StatefulWidget {
   final int id;
   final String nombre;
   final String ubic;
+  final String fechRec;
   final bool mantenimiento;
-  const Mantenimiento({ super.key, required this.name, required this.nombre, required this.ubic, required this.id, required this.mantenimiento});
+  const Mantenimiento({ super.key, required this.name, required this.nombre, required this.ubic, required this.id, required this.mantenimiento, required this.fechRec});
   @override
   _MantenimientoState createState() => _MantenimientoState();
 }
@@ -81,15 +82,15 @@ class _MantenimientoState extends State<Mantenimiento> {
                     _formKey.currentState!.save();
                     if (widget.name == "Bares") {
                       if (widget.mantenimiento) {
-                        _db.updateBar(new Bar(id: widget.id, nombre: name, ubic: location));
+                        _db.updateBar(new Bar(id: widget.id, nombre: name, ubic: location, fechRec: widget.fechRec));
                       }else{
-                        _db.insertBar(new Bar(id: widget.id, nombre: name, ubic: location));
+                        _db.insertBar(new Bar(id: widget.id, nombre: name, ubic: location, fechRec: widget.fechRec));
                       }
                     }else{
                       if (widget.mantenimiento) {
-                        _db.updateSalon(new Salon(id: widget.id, nombre: name, ubic: location));
+                        _db.updateSalon(new Salon(id: widget.id, nombre: name, ubic: location, fechRec: widget.fechRec));
                       }else{
-                        _db.insertSalon(new Salon(id: widget.id, nombre: name, ubic: location));
+                        _db.insertSalon(new Salon(id: widget.id, nombre: name, ubic: location, fechRec: widget.fechRec));
                       }
                     }
                     _guardadoDialog();
