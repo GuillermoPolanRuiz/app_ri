@@ -83,6 +83,10 @@ class _ListDataScreen extends State<ListDataScreen> {
                       }else{
                         colorRec = Colors.green;
                       }
+                      String recaudacionDia = "0,00";
+                      if (comprobarFechaActual(sitio.fechRec.toString())) {
+                        recaudacionDia = sitio.fechRec.toString().split(';')[1];
+                      }
                       return Card(
                             key: ValueKey(sitio.id),
                             margin: const EdgeInsets.all(30),
@@ -137,7 +141,7 @@ class _ListDataScreen extends State<ListDataScreen> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                        sitio.fechRec + " €",
+                                        "$recaudacionDia €",
                                         style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -206,6 +210,16 @@ class _ListDataScreen extends State<ListDataScreen> {
   @override
   void initState() {
     super.initState();
+  }
+  
+  bool comprobarFechaActual(String fechRec) {
+    var array = fechRec.split(';');
+    String fecha = array[0];
+    String fechaActual = DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString();
+    if (fecha == fechaActual) {
+      return true;
+    }
+    return false;
   }
   
   

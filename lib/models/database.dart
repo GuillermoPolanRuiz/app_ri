@@ -139,11 +139,12 @@ class DatabaseService {
 
   Future<void> updateSitioRec(int idSitio, String nombreTabla) async{
     final db = await _databaseService.database;
+    String fechaActual = DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString();
     double total = 0.00;
     String valor = "";
      List<Map<String, dynamic>> count = await db.rawQuery('''SELECT recaudacionTotal FROM Maquinas 
       WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
-      [DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString(), idSitio, nombreTabla]);
+      [fechaActual, idSitio, nombreTabla]);
 
     if (count.isNotEmpty) {
       for (var e in count) {
@@ -154,6 +155,7 @@ class DatabaseService {
     if (valor.split(',')[1].length == 1) {
       valor += '0';
     }
+    valor = fechaActual + ";" + valor;
     if (nombreTabla == "Bares") {
       int updateCount = await db.rawUpdate('''
       UPDATE Bares 
