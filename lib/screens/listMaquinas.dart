@@ -28,14 +28,14 @@ class _ListMaquinasState extends State<ListMaquinas> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.nombreSitio),
-        actions: <Widget>[
-          PopupMenuButton<int>(
-              onSelected: (item) => handleClick(item),
-              itemBuilder: (context) => [
-                PopupMenuItem<int>(value: 0, child: Text('Limpiar')),
-              ],
-            ),
-        ],
+        // actions: <Widget>[
+        //   PopupMenuButton<int>(
+        //       onSelected: (item) => handleClick(item),
+        //       itemBuilder: (context) => [
+        //         PopupMenuItem<int>(value: 0, child: Text('Limpiar')),
+        //       ],
+        //     ),
+        // ],
         backgroundColor: AppTheme.primary, // Cambia el color de fondo de la barra de navegación
       ),
       body: FutureBuilder(
@@ -76,11 +76,14 @@ class _ListMaquinasState extends State<ListMaquinas> {
                                     Colors.white,
                                     Colors.white,
                                     Colors.white,
+                                    Colors.white,
+                                    Colors.white,
+                                    Colors.white,
                                     secondColorBtn,
                                     colorBtn,
                                   ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
+                                  begin: Alignment.center,
+                                  end: Alignment.topRight,
                                 )
                               ),
                               child: Column(

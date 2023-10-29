@@ -92,8 +92,13 @@ class _ListDataScreen extends State<ListDataScreen> {
                             margin: const EdgeInsets.all(30),
                             color: Color.fromARGB(255, 255, 251, 251),
                             elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Color.fromARGB(255, 40, 39, 39), width: 1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                             child: Container(
                               decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.grey.withOpacity(0.5),
