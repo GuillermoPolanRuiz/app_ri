@@ -142,16 +142,18 @@ class DatabaseService {
     String fechaActual = DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString();
     double total = 0.00;
     String valor = "";
-    List<Map<String, dynamic>> count;
-    if (nombreTabla == "Bares") {
-      count = await db.rawQuery('''SELECT recaudacionParcial FROM Maquinas 
+    // if (nombreTabla == "Bares") {
+    //   count = await db.rawQuery('''SELECT recaudacionParcial FROM Maquinas 
+    //   WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
+    //   [fechaActual, idSitio, nombreTabla]);
+    // }else{
+    //   count = await db.rawQuery('''SELECT recaudacionTotal FROM Maquinas 
+    //   WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
+    //   [fechaActual, idSitio, nombreTabla]);
+    // }
+    List<Map<String, dynamic>> count = await db.rawQuery('''SELECT recaudacionParcial FROM Maquinas 
       WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
       [fechaActual, idSitio, nombreTabla]);
-    }else{
-      count = await db.rawQuery('''SELECT recaudacionTotal FROM Maquinas 
-      WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
-      [fechaActual, idSitio, nombreTabla]);
-    }
 
     if (count.isNotEmpty) {
       for (var e in count) {

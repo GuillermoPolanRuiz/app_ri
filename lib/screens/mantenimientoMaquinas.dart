@@ -583,7 +583,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                 TableRow(
                   children: [
                     const TableCell(
-                      child: Center(child: Text("R.TOTAL", style: TextStyle(fontSize: 12),)),
+                      child: Center(child: Text("RESTO", style: TextStyle(fontSize: 12),)),
                     ),
                     TableCell(
                       child: Center(child: Text(
