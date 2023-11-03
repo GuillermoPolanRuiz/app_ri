@@ -54,20 +54,28 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
   int MVeinte = 0;
   int MDiez = 0;
   int total = 0;
+  bool cambiosSinGuardar = false;
 
   String pParcial = "";
 
   double totalPrecio = 0.00;
   Color colorTotal = Colors.green;
 
+  
+
   @override
-  Widget build(BuildContext context) {
-    if (widget.NombreTabla == "Salones") {
-      pParcial = "P. Manual";
-    }else{
-      pParcial = "R. PARCIAL";
-    }
-    return Scaffold(
+  Widget build(BuildContext context) => WillPopScope(
+    onWillPop: () async {
+      if (widget.mantenimiento == false && !controllerNombre.text.isEmpty) {
+        cambiosSinGuardar = true;
+      }
+      if (cambiosSinGuardar) {
+        _cambiosSinGuardar();
+        return false;
+      }
+      return true;
+    },
+    child: Scaffold(
       appBar: AppBar(
         title: Text('Mantenimiento Máquinas'),
         backgroundColor: AppTheme.primary, // Cambia el color de fondo de la barra de navegación
@@ -624,51 +632,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
                   // recaudacion = totalPrecio.toString();
-                  if (widget.mantenimiento) {
-                    _db.updateMaquina(
-                    Maquina(
-                      id: widget.id,
-                      idSitio: widget.IdSitio, 
-                      nombre: controllerNombre.text, 
-                      nombreTabla: widget.NombreTabla, 
-                      recaudacion: recaudacion, 
-                      recaudacionParcial: recaudacionParcial,
-                      recaudacionTotal: recaudacionTotal,
-                      fechaUltimaRec: (DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString()),
-                      BCincuenta: BCincuenta,
-                      BVeinte: BVeinte,
-                      BDiez: BDiez,
-                      BCinco: BCinco,
-                      MDos: MDos,
-                      MUno: MUno,
-                      MCincuenta: MCincuenta,
-                      MVeinte: MVeinte,
-                      MDiez: MDiez
-                      ));
-                  }else{
-                    _db.insertMaquina(
-                    Maquina(
-                      id: total+1,
-                      idSitio: widget.IdSitio, 
-                      nombre: controllerNombre.text, 
-                      nombreTabla: widget.NombreTabla, 
-                      recaudacion: recaudacion, 
-                      recaudacionParcial: recaudacionParcial,
-                      recaudacionTotal: recaudacionTotal,
-                      fechaUltimaRec: (DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString()),
-                      BCincuenta: BCincuenta,
-                      BVeinte: BVeinte,
-                      BDiez: BDiez,
-                      BCinco: BCinco,
-                      MDos: MDos,
-                      MUno: MUno,
-                      MCincuenta: MCincuenta,
-                      MVeinte: MVeinte,
-                      MDiez: MDiez
-                      ));
-                  }
-                  _db.updateSitioRec(widget.IdSitio, widget.NombreTabla);
-                  _guardadoDialog();
+                  _guardarDatosMaquina();
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -703,11 +667,16 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
           ],
         ),
       ),
+    )
     );
-  }
   @override
   void initState() {
     super.initState();
+    if (widget.NombreTabla == "Salones") {
+      pParcial = "P. Manual";
+    }else{
+      pParcial = "R. PARCIAL";
+    }
     controllerNombre = TextEditingController(text: widget.nombre);
     nombre = widget.nombre;
     BCincuenta = widget.BCincuenta;
@@ -784,6 +753,47 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
           ),
           TextButton(
             child: const Text('No'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _cambiosSinGuardar() async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, 
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Cambios sin guardar'),
+        content: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: ListBody(
+            children: <Widget>[
+              Text("Hay cambios sin guardar. ¿Desea guardar los cambios?")
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Sí'),
+            onPressed: () {
+              _guardarDatosMaquina();
+            },
+          ),
+          TextButton(
+            child: const Text('No'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+            child: const Text('Cancelar'),
             onPressed: () {
               Navigator.of(context).pop();
               },
@@ -882,6 +892,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                   recaudacionTotal = "0,00";
                 }
                 controllerCantidad.text = "";
+                cambiosSinGuardar = true;
                 Navigator.of(context).pop();
             }
             });
@@ -971,6 +982,55 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
       return false;
     }
     return true;
+  }
+  
+  void _guardarDatosMaquina() {
+    if (widget.mantenimiento) {
+      _db.updateMaquina(
+      Maquina(
+        id: widget.id,
+        idSitio: widget.IdSitio, 
+        nombre: controllerNombre.text, 
+        nombreTabla: widget.NombreTabla, 
+        recaudacion: recaudacion, 
+        recaudacionParcial: recaudacionParcial,
+        recaudacionTotal: recaudacionTotal,
+        fechaUltimaRec: (DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString()),
+        BCincuenta: BCincuenta,
+        BVeinte: BVeinte,
+        BDiez: BDiez,
+        BCinco: BCinco,
+        MDos: MDos,
+        MUno: MUno,
+        MCincuenta: MCincuenta,
+        MVeinte: MVeinte,
+        MDiez: MDiez
+        ));
+    }else{
+      _db.insertMaquina(
+      Maquina(
+        id: total+1,
+        idSitio: widget.IdSitio, 
+        nombre: controllerNombre.text, 
+        nombreTabla: widget.NombreTabla, 
+        recaudacion: recaudacion, 
+        recaudacionParcial: recaudacionParcial,
+        recaudacionTotal: recaudacionTotal,
+        fechaUltimaRec: (DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString()),
+        BCincuenta: BCincuenta,
+        BVeinte: BVeinte,
+        BDiez: BDiez,
+        BCinco: BCinco,
+        MDos: MDos,
+        MUno: MUno,
+        MCincuenta: MCincuenta,
+        MVeinte: MVeinte,
+        MDiez: MDiez
+        ));
+    }
+    _db.updateSitioRec(widget.IdSitio, widget.NombreTabla);
+    Navigator.of(context).pop();
+    _guardadoDialog();
   }
   
   

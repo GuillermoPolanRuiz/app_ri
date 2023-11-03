@@ -48,12 +48,18 @@ class _ListMaquinasState extends State<ListMaquinas> {
                       total = snapshot.data!.length;
                       final sitio = snapshot.data![index];
                       Color colorBtn = Colors.green;
+                      String recText = "";
                       if (sitio.recaudacionTotal.contains('-')) {
                         colorBtn = Color.fromARGB(255, 231, 116, 108);
                         secondColorBtn = Color.fromARGB(255, 255, 195, 195);
                       }else{
                         colorBtn = Color.fromARGB(255, 131, 234, 135);
                         secondColorBtn = Color.fromARGB(255, 200, 255, 203);
+                      }
+                      if (widget.nombreTabla == "Salones") {
+                        recText = sitio.recaudacionTotal.toString();
+                      }else{
+                        recText = sitio.recaudacionParcial.toString();
                       }
                       return Card(
                             key: ValueKey(sitio.id),
@@ -91,14 +97,14 @@ class _ListMaquinasState extends State<ListMaquinas> {
                                   ListTile(
                                     title: Row(children: [Text(
                                         sitio.nombre,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold
                                         ),
                                       ), Expanded(child: Column()),
                                       Container(margin: EdgeInsets.only(bottom: 30),)],),
                                       subtitle: Text(
-                                          "Recaudación: " + sitio.recaudacionParcial.toString() + ' €' + "\n" + "Fecha: " + sitio.fechaUltimaRec.toString(),
+                                          "Recaudación: " + recText + ' €' + "\n" + "Fecha: " + sitio.fechaUltimaRec.toString(),
                                           style: const TextStyle(
                                             fontSize: 14
                                           ),
