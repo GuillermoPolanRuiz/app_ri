@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../models/database.dart';
 import '../theme/theme.dart';
+import 'consultaSitio.dart';
 import 'mantenimiento.dart';
 import 'mantenimientoMaquinas.dart';
 
@@ -28,14 +29,15 @@ class _ListMaquinasState extends State<ListMaquinas> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.nombreSitio),
-        // actions: <Widget>[
-        //   PopupMenuButton<int>(
-        //       onSelected: (item) => handleClick(item),
-        //       itemBuilder: (context) => [
-        //         PopupMenuItem<int>(value: 0, child: Text('Limpiar')),
-        //       ],
-        //     ),
-        // ],
+        actions: <Widget>[
+          PopupMenuButton<int>(
+              onSelected: (item) => handleClick(item),
+              itemBuilder: (context) => [
+                PopupMenuItem<int>(value: 0, child: Text('Añadir Maquina')),
+                PopupMenuItem<int>(value: 1, child: Text('Consultar')),
+              ],
+            ),
+        ],
         backgroundColor: AppTheme.primary, // Cambia el color de fondo de la barra de navegación
       ),
       body: FutureBuilder(
@@ -155,50 +157,53 @@ class _ListMaquinasState extends State<ListMaquinas> {
                 if (snapshot.hasError) return Text("error");
                 return CircularProgressIndicator();
               },
-            ), 
-          floatingActionButton: Align(
-          alignment: const Alignment(0.9, 0.9),
-          child: FloatingActionButton.large(
-            onPressed: ()
-            => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MantenimientoMaquinas(
-                      IdSitio: widget.idSitio, 
-                      NombreTabla: widget.nombreTabla, 
-                      id: total + 1, 
-                      nombre: '', 
-                      nombreSitio: widget.nombreUbic, 
-                      mantenimiento: false,
-                      recaudacion: "0,00",
-                      recaudacionParcial: "0,00",
-                      recaudacionTotal: "0,00",
-                      BCincuenta: 0,
-                      BVeinte: 0,
-                      BDiez: 0,
-                      BCinco: 0,
-                      MDos: 0,
-                      MUno: 0,
-                      MCincuenta: 0,
-                      MVeinte: 0,
-                      MDiez: 0
-                    )
-                  )
-              ).then((_){
-                setState(() {
-                  future = _db.getMaquinas(widget.idSitio, widget.nombreTabla);
-                });
-              }),
-            backgroundColor: AppTheme.primary,
-            elevation: 5,
-            child: const Icon(Icons.add),
-            )),
+            ),
     );
   }
   
   void handleClick(int item) {
     switch (item) {
       case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MantenimientoMaquinas(
+                IdSitio: widget.idSitio, 
+                NombreTabla: widget.nombreTabla, 
+                id: total + 1, 
+                nombre: '', 
+                nombreSitio: widget.nombreUbic, 
+                mantenimiento: false,
+                recaudacion: "0,00",
+                recaudacionParcial: "0,00",
+                recaudacionTotal: "0,00",
+                BCincuenta: 0,
+                BVeinte: 0,
+                BDiez: 0,
+                BCinco: 0,
+                MDos: 0,
+                MUno: 0,
+                MCincuenta: 0,
+                MVeinte: 0,
+                MDiez: 0
+              )
+            )
+        ).then((_){
+          setState(() {
+            future = _db.getMaquinas(widget.idSitio, widget.nombreTabla);
+          });
+        });
+        break;
+      case 1:
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ConsultaSitio(
+                idSitio: widget.idSitio, 
+                nombreTabla: widget.nombreTabla, 
+              )
+            )
+        );
         break;
     }
   }

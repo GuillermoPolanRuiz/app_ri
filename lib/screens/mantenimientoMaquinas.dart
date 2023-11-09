@@ -633,6 +633,7 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                   _formKey.currentState!.save();
                   // recaudacion = totalPrecio.toString();
                   _guardarDatosMaquina();
+                  _guardadoDialog();
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -783,6 +784,8 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
             child: const Text('Sí'),
             onPressed: () {
               _guardarDatosMaquina();
+              Navigator.of(context).pop();
+              _guardadoDialog();
             },
           ),
           TextButton(
@@ -1029,8 +1032,6 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
         ));
     }
     _db.updateSitioRec(widget.IdSitio, widget.NombreTabla);
-    Navigator.of(context).pop();
-    _guardadoDialog();
   }
   
   

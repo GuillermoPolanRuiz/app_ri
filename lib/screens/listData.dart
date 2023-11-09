@@ -34,6 +34,14 @@ class _ListDataScreen extends State<ListDataScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("${widget.name}"),
+        actions: <Widget>[
+          PopupMenuButton<int>(
+              onSelected: (item) => handleClick(item),
+              itemBuilder: (context) => [
+                PopupMenuItem<int>(value: 0, child: Text('Añadir ' + widget.name.substring(0, widget.name.length - 2))),
+              ],
+            ),
+        ],
       ),
       body: Column(
         children: [
@@ -186,30 +194,26 @@ class _ListDataScreen extends State<ListDataScreen> {
           )
         ],
       ),
-      floatingActionButton: Align(
-          alignment: const Alignment(0.9, 0.9),
-          child: FloatingActionButton(
-            onPressed: ()
-            => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Mantenimiento(name: widget.name,id: total+1,nombre: '', ubic: '', fechRec: '', mantenimiento: false)
-                  )
-              ).then((_){
-                setState(() {
-                  future = _db.getData(widget.name);
-                });
-              }),
-            backgroundColor: AppTheme.primary,
-            elevation: 5,
-            child: const Icon(Icons.add),
-            )),
     );
   }
 
   
   
-
+  void handleClick(int item) {
+    switch (item) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Mantenimiento(name: widget.name,id: total+1,nombre: '', ubic: '', fechRec: '', mantenimiento: false)
+            )
+        ).then((_){
+          setState(() {
+            future = _db.getData(widget.name);
+          });
+        });
+    }
+  }
   
   
   @override

@@ -210,6 +210,22 @@ class DatabaseService {
     return List.generate(maps.length, (index) => Bar.fromMap(maps[index]));
   }
 
+  Future<List<Bar>> getSitio(int idSitio, String nombreTabla) async {
+    final db = await _databaseService.database;
+    List<Map<String, dynamic>> maps = List.empty();
+    if (nombreTabla == "Bares") {
+      maps = await db.rawQuery('''SELECT * FROM Bares 
+      WHERE id = ?''',
+      [idSitio]);
+    }else{
+      maps = await db.rawQuery('''SELECT * FROM Salones 
+      WHERE id = ?''',
+      [idSitio]);
+    }
+    
+    return List.generate(maps.length, (index) => Bar.fromMap(maps[index]));
+  }
+
   Future<List<Salon>> getSalones() async {
     final db = await _databaseService.database;
     final List<Map<String, dynamic>> maps = await db.query('Salones');
