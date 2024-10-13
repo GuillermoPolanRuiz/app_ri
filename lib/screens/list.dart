@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:app_ri/models/bar.dart';
 import 'package:app_ri/models/myFileStorage.dart';
+import 'package:app_ri/screens/historial.dart';
 import 'package:app_ri/screens/listData.dart';
 import 'package:flutter/material.dart';
 
@@ -33,10 +34,12 @@ class _ListScreen extends State<ListScreen> {
             // MyContainer(link: ListDataScreen(name: 'casasRurales', text: 'Casas Rurales',), text: "Casas Rurales", icon: Icons.villa_rounded),
             // MyContainer(link: ListDataScreen(name: 'museos', text: 'Museos'), text: 'Museos', icon: Icons.museum_rounded),
             
-            Padding(padding: EdgeInsets.all(60)),
+            Padding(padding: EdgeInsets.all(20)),
             MyContainer(link: ListDataScreen(name: 'Bares'), text: 'Bares', icon: Icons.restaurant_menu),
-            Padding(padding: EdgeInsets.all(60)),
+            Padding(padding: EdgeInsets.all(20)),
             MyContainer(link: ListDataScreen(name: 'Salones'), text: 'Salones', icon: Icons.gamepad),
+            Padding(padding: EdgeInsets.all(20)),
+            MyContainer(link: HistorialScreen(), text: 'Historial', icon: Icons.note_alt_outlined),
             const SizedBox(height: 100),
             ElevatedButton(
               onPressed: () async {

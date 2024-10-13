@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'Historial.dart';
 import 'bar.dart';
 import 'maquina.dart';
 
@@ -99,6 +100,12 @@ class DatabaseService {
         )''',
     );
 
+    await db.execute(
+      '''CREATE TABLE Historial(
+        id INTEGER PRIMARY KEY, 
+        cantidad INTEGER NOT NULL, 
+        fecha TEXT NOT NULL)''',
+    );
   }
 
 
@@ -125,6 +132,15 @@ class DatabaseService {
     await db.insert(
       'Maquinas',
       maquina.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> insertHistorial(Historial historial) async {
+    final db = await _databaseService.database;
+    await db.insert(
+      'Historial',
+      historial.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -238,6 +254,12 @@ class DatabaseService {
     return List.generate(list.length, (index) => Maquina.fromMap(list[index]));
   }
 
+  Future<List<Historial>> getHistorial() async {
+    final db = await _databaseService.database;
+    final list = await db.rawQuery("SELECT 0 as id, (SELECT CAST(SUM(CAST(cantidad as decimal)) as TEXT)) AS cantidad FROM Historial UNION ALL SELECT id, cantidad FROM Historial ORDER BY id");
+    return List.generate(list.length, (index) => Historial.fromMap(list[index]));
+  }
+
   Future<void> updateBar(Bar sitio) async {
     final db = await _databaseService.database;
     await db.update('Bares', sitio.toMap(), where: 'id = ?', whereArgs: [sitio.id]);
@@ -266,6 +288,11 @@ class DatabaseService {
   Future<void> deleteMaquina(int id) async {
     final db = await _databaseService.database;
     await db.delete('Maquinas', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteHistorialCompleto() async {
+    final db = await _databaseService.database;
+    await db.delete('Historial');
   }
   
   
