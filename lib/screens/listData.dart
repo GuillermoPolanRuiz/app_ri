@@ -95,6 +95,10 @@ class _ListDataScreen extends State<ListDataScreen> {
                       if (comprobarFechaActual(sitio.fechRec.toString())) {
                         recaudacionDia = sitio.fechRec.toString().split(';')[1];
                       }
+                      String premiosPendientesDia = "0,00";
+                      if (comprobarFechaActual(sitio.fechRec.toString())) {
+                        premiosPendientesDia = sitio.fechRec.toString().split(';')[2];
+                      }
                       return Card(
                             key: ValueKey(sitio.id),
                             margin: const EdgeInsets.all(30),
@@ -153,8 +157,19 @@ class _ListDataScreen extends State<ListDataScreen> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(
+                                    child: Text("Recaudación total: " + 
                                         "$recaudacionDia €",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: colorRec
+                                        ),
+                                      ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text("P. Pendientes total: " + 
+                                        "$premiosPendientesDia €",
                                         style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,

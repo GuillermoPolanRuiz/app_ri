@@ -9,6 +9,7 @@ class Maquina {
   final String nombreTabla;
   final String recaudacion;
   final String recaudacionParcial;
+  final String premiosPendientes;
   final String recaudacionTotal;
   final String fechaUltimaRec;
   final int BCincuenta;
@@ -38,6 +39,7 @@ class Maquina {
     required this.MVeinte,
     required this.MDiez,
     required this.recaudacionParcial,
+    required this.premiosPendientes,
     required this.recaudacionTotal
   });
 
@@ -51,6 +53,7 @@ class Maquina {
       'nombreTabla': nombreTabla,
       'recaudacion': recaudacion,
       'recaudacionParcial': recaudacionParcial,
+      'premiosPendientes': premiosPendientes,
       'recaudacionTotal': recaudacionTotal,
       'fechaUltimaRec': fechaUltimaRec,
       'BCincuenta': BCincuenta,
@@ -73,6 +76,7 @@ class Maquina {
       nombreTabla: map['nombreTabla'] ?? '',
       recaudacion: map['recaudacion'] ?? '',
       recaudacionParcial: map['recaudacionParcial'] ?? '',
+      premiosPendientes: map['premiosPendientes'] ?? '',
       recaudacionTotal: map['recaudacionTotal'] ?? '',
       fechaUltimaRec: map['fechaUltimaRec'] ?? '',
       BCincuenta: map['BCincuenta'] ?? 0,

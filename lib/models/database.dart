@@ -157,8 +157,11 @@ class DatabaseService {
     final db = await _databaseService.database;
     String fechaActual = DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString();
     double total = 0.00;
+    double totalPremiosPendientes = 0.00;
     String valor = "";
+    String valorPremiosPendientes = "";
     List<Map<String, dynamic>> count;
+    List<Map<String, dynamic>> countPremiosPendientes = new List.empty();
     if (nombreTabla == "Bares") {
       count = await db.rawQuery('''SELECT recaudacionParcial FROM Maquinas 
       WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
@@ -167,17 +170,30 @@ class DatabaseService {
       count = await db.rawQuery('''SELECT recaudacionTotal FROM Maquinas 
       WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
       [fechaActual, idSitio, nombreTabla]);
+
+      countPremiosPendientes = await db.rawQuery('''SELECT premiosPendientes FROM Maquinas 
+      WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
+      [fechaActual, idSitio, nombreTabla]);
     }
     if (count.isNotEmpty) {
       for (var e in count) {
         total += double.parse(e.values.toString().replaceAll(',', '.').replaceAll('(', '').replaceAll(')', ''));
       }
     }
+    if (countPremiosPendientes.isNotEmpty) {
+      for (var e in countPremiosPendientes) {
+        totalPremiosPendientes += double.parse(e.values.toString().replaceAll(',', '.').replaceAll('(', '').replaceAll(')', ''));
+      }
+    }
     valor = total.toStringAsFixed(2).replaceAll('.', ',');
+    valorPremiosPendientes = totalPremiosPendientes.toStringAsFixed(2).replaceAll('.', ',');
     if (valor.split(',')[1].length == 1) {
       valor += '0';
     }
-    valor = fechaActual + ";" + valor;
+    if (valorPremiosPendientes.split(',')[1].length == 1) {
+      valorPremiosPendientes += '0';
+    }
+    valor = fechaActual + ";" + valor + ";" + valorPremiosPendientes;
     if (nombreTabla == "Bares") {
       int updateCount = await db.rawUpdate('''
       UPDATE Bares 
