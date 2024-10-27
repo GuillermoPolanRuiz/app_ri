@@ -24,6 +24,8 @@ class MantenimientoMaquinas extends StatefulWidget {
   final String recaudacion;
   final String recaudacionParcial;
   final String premiosPendientes;
+  final String pagosPendientes;
+  final String totalPagos;
   final String recaudacionTotal;
   final int MDos;
   final int MUno;
@@ -31,7 +33,7 @@ class MantenimientoMaquinas extends StatefulWidget {
   final int MVeinte;
   final int MDiez;
   final bool mantenimiento;
-  const MantenimientoMaquinas({ super.key, required this.nombre, required this.id, required this.mantenimiento, required this.IdSitio, required this.NombreTabla, required this.BCincuenta, required this.BVeinte, required this.BDiez, required this.BCinco, required this.recaudacion, required this.MDos, required this.MUno, required this.MCincuenta, required this.MVeinte, required this.MDiez, required this.recaudacionParcial, required this.premiosPendientes, required this.recaudacionTotal, required this.nombreSitio});
+  const MantenimientoMaquinas({ super.key, required this.nombre, required this.id, required this.mantenimiento, required this.IdSitio, required this.NombreTabla, required this.BCincuenta, required this.BVeinte, required this.BDiez, required this.BCinco, required this.recaudacion, required this.MDos, required this.MUno, required this.MCincuenta, required this.MVeinte, required this.MDiez, required this.recaudacionParcial, required this.premiosPendientes, required this.pagosPendientes, required this.totalPagos, required this.recaudacionTotal, required this.nombreSitio});
   @override
   _MantenimientoMaquinasState createState() => _MantenimientoMaquinasState();
 }
@@ -49,6 +51,8 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
   String recaudacion = "";
   String recaudacionParcial = "";
   String premiosPendientes = "";
+  String pagosPendientes = "";
+  String totalPagos = "";
   String recaudacionTotal = "";
   int MDos = 0;
   int MUno = 0;
@@ -630,6 +634,40 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
               ),
               visible: esSalon,
             ),
+            Visibility(
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  Table(
+                    border: TableBorder.symmetric(
+                    inside: BorderSide(width: 2, color: AppTheme.primary),
+                    outside: BorderSide(width: 2)),
+                    columnWidths: {
+                      0:FixedColumnWidth(100),
+                      1:FixedColumnWidth(190)
+                    },
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    children: [
+                      TableRow(
+                        children: [
+                          TableCell(
+                            child: 
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(child: Text("Pagado", style: TextStyle(fontSize: 12),)),
+                              )
+                          ),
+                          TableCell(
+                            child: Center(child: Text("$totalPagos" + " €")),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              visible: esSalon,
+            ),
             const SizedBox(height: 20),
             Table(
               border: TableBorder.symmetric(
@@ -749,6 +787,16 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
       recaudacionParcial = "0,00";  
     }else{
       premiosPendientes = widget.premiosPendientes;
+    }
+    if (widget.pagosPendientes.length == 0) {
+      pagosPendientes = "0,00";  
+    }else{
+      pagosPendientes = widget.pagosPendientes;
+    }
+    if (widget.totalPagos.length == 0) {
+      totalPagos = "0,00";  
+    }else{
+      totalPagos = widget.totalPagos;
     }
     if (widget.recaudacionTotal.length == 0) {
       recaudacionTotal = "0,00";  
@@ -966,6 +1014,11 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
                 if (recaudacionTotal.contains('-') && widget.nombreSitio.toUpperCase().contains('CASTEJ') && widget.NombreTabla == "Salones") {
                   recaudacionTotal = "0,00";
                 }
+
+                final recaudacionParcialNum = double.tryParse(recaudacionParcial.replaceAll(',', '.')) ?? 0.0;
+                final premiosPendientesNum = double.tryParse(premiosPendientes.replaceAll(',', '.')) ?? 0.0;
+                totalPagos = (recaudacionParcialNum + premiosPendientesNum).toStringAsFixed(2);
+
                 controllerCantidad.text = "";
                 cambiosSinGuardar = true;
                 Navigator.of(context).pop();
@@ -1060,6 +1113,15 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
   }
   
   void _guardarDatosMaquina() {
+    var totalPagosPendientes;
+    final recaudacionNum = double.tryParse(recaudacion.replaceAll(',', '.')) ?? 0.0;
+    final totalPagosNum = double.tryParse(totalPagos.replaceAll(',', '.')) ?? 0.0;
+    if (recaudacionNum > totalPagosNum) {
+      pagosPendientes = "0,00";
+    }else{
+      pagosPendientes = (totalPagosNum - recaudacionNum).toStringAsFixed(2);
+    }
+
     if (widget.mantenimiento) {
       _db.updateMaquina(
       Maquina(
@@ -1070,6 +1132,8 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
         recaudacion: recaudacion, 
         recaudacionParcial: recaudacionParcial,
         premiosPendientes: premiosPendientes,
+        pagosPendientes: pagosPendientes,
+        totalPagos: totalPagos,
         recaudacionTotal: recaudacionTotal,
         fechaUltimaRec: (DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString()),
         BCincuenta: BCincuenta,
@@ -1092,6 +1156,8 @@ class _MantenimientoMaquinasState extends State<MantenimientoMaquinas> {
         recaudacion: recaudacion, 
         recaudacionParcial: recaudacionParcial,
         premiosPendientes: premiosPendientes,
+        pagosPendientes: pagosPendientes,
+        totalPagos: totalPagos,
         recaudacionTotal: recaudacionTotal,
         fechaUltimaRec: (DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString()),
         BCincuenta: BCincuenta,

@@ -1,3 +1,4 @@
+import 'package:app_ri/models/maquina.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -48,7 +49,7 @@ class _ListMaquinasState extends State<ListMaquinas> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
                       total = snapshot.data!.length;
-                      final sitio = snapshot.data![index];
+                      Maquina sitio = snapshot.data![index];
                       Color colorBtn = Colors.green;
                       String recText = "";
                       if (sitio.recaudacionTotal.contains('-')) {
@@ -106,7 +107,7 @@ class _ListMaquinasState extends State<ListMaquinas> {
                                       ), Expanded(child: Column()),
                                       Container(margin: EdgeInsets.only(bottom: 30),)],),
                                       subtitle: Text(
-                                          "Recaudación: " + recText + ' €' + "\n" + "Fecha: " + sitio.fechaUltimaRec.toString(),
+                                          "Recaudación: " + recText + ' €' + resta(sitio.recaudacionParcial, sitio.premiosPendientes, sitio.recaudacion) + "\n" + "Fecha: " + sitio.fechaUltimaRec.toString(),
                                           style: const TextStyle(
                                             fontSize: 14
                                           ),
@@ -128,6 +129,8 @@ class _ListMaquinasState extends State<ListMaquinas> {
                                                 recaudacion: sitio.recaudacion,
                                                 recaudacionParcial: sitio.recaudacionParcial,
                                                 premiosPendientes: sitio.premiosPendientes,
+                                                pagosPendientes: sitio.pagosPendientes,
+                                                totalPagos: sitio.totalPagos,
                                                 recaudacionTotal: sitio.recaudacionTotal,
                                                 BCincuenta: sitio.BCincuenta,
                                                 BVeinte: sitio.BVeinte,
@@ -178,6 +181,8 @@ class _ListMaquinasState extends State<ListMaquinas> {
                 recaudacion: "0,00",
                 recaudacionParcial: "0,00",
                 premiosPendientes: "0,00",
+                pagosPendientes: "0,00",
+                totalPagos: "0,00",
                 recaudacionTotal: "0,00",
                 BCincuenta: 0,
                 BVeinte: 0,
@@ -208,5 +213,27 @@ class _ListMaquinasState extends State<ListMaquinas> {
         );
         break;
     }
+  }
+  String resta(String recaudacionParcial, String premiosPendientes, String recaudacion) {
+    var resultado = "\nPagado: ";
+    if (widget.nombreTabla == "Salones") {
+      final recaudacionParcialNum = double.tryParse(recaudacionParcial.replaceAll(',', '.')) ?? 0.0;
+      final premiosPendientesNum = double.tryParse(premiosPendientes.replaceAll(',', '.')) ?? 0.0;
+      final totalPagos = recaudacionParcialNum + premiosPendientesNum;
+
+      final recaudacionNum = double.tryParse(recaudacion.replaceAll(',', '.'));
+
+      if (recaudacionNum! > totalPagos) {
+        return resultado + totalPagos.toStringAsFixed(2) + " €" + "\nPago pendiente: " + "0,00" + " €";
+      }
+
+      final totalPagosPendientes = totalPagos - recaudacionNum;
+
+      return resultado + totalPagos.toStringAsFixed(2) + " €" + "\nPago pendiente: " + totalPagosPendientes.toStringAsFixed(2) + " €";
+
+    }else{
+      return "";
+    }
+
   }
 }

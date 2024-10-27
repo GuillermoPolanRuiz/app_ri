@@ -59,7 +59,7 @@ class _ListScreen extends State<ListScreen> {
             ),
             const SizedBox(height: 20),
             Center(
-              child: Text('Versión 1.5'),
+              child: Text('Versión 1.6'),
             ),
           ],
          ),

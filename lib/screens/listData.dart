@@ -95,9 +95,13 @@ class _ListDataScreen extends State<ListDataScreen> {
                       if (comprobarFechaActual(sitio.fechRec.toString())) {
                         recaudacionDia = sitio.fechRec.toString().split(';')[1];
                       }
-                      String premiosPendientesDia = "0,00";
+                      String pagosPendientesDia = "0,00";
                       if (comprobarFechaActual(sitio.fechRec.toString())) {
-                        premiosPendientesDia = sitio.fechRec.toString().split(';')[2];
+                        pagosPendientesDia = sitio.fechRec.toString().split(';')[2];
+                      }
+                      String pagosTotalesDia = "0,00";
+                      if (comprobarFechaActual(sitio.fechRec.toString())) {
+                        pagosTotalesDia = sitio.fechRec.toString().split(';')[3];
                       }
                       return Card(
                             key: ValueKey(sitio.id),
@@ -157,7 +161,7 @@ class _ListDataScreen extends State<ListDataScreen> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text("Recaudación total: " + 
+                                    child: Text("Total recaudado: " + 
                                         "$recaudacionDia €",
                                         style: TextStyle(
                                           fontSize: 18,
@@ -168,8 +172,19 @@ class _ListDataScreen extends State<ListDataScreen> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text("P. Pendientes total: " + 
-                                        "$premiosPendientesDia €",
+                                    child: Text(" Total pagado: " + 
+                                        "$pagosTotalesDia €",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: colorRec
+                                        ),
+                                      ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(" Total pagos pendientes: " + 
+                                        "$pagosPendientesDia €",
                                         style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,

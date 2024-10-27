@@ -157,11 +157,14 @@ class DatabaseService {
     final db = await _databaseService.database;
     String fechaActual = DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString();
     double total = 0.00;
-    double totalPremiosPendientes = 0.00;
+    double totalPagosPendientes = 0.00;
+    double totalPagosTotales = 0.00;
     String valor = "";
-    String valorPremiosPendientes = "";
+    String valorPagosPendientes = "";
+    String valorPagosTotales = "";
     List<Map<String, dynamic>> count;
-    List<Map<String, dynamic>> countPremiosPendientes = new List.empty();
+    List<Map<String, dynamic>> countPagosPendientes = new List.empty();
+    List<Map<String, dynamic>> countPagosTotales = new List.empty();
     if (nombreTabla == "Bares") {
       count = await db.rawQuery('''SELECT recaudacionParcial FROM Maquinas 
       WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
@@ -171,7 +174,11 @@ class DatabaseService {
       WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
       [fechaActual, idSitio, nombreTabla]);
 
-      countPremiosPendientes = await db.rawQuery('''SELECT premiosPendientes FROM Maquinas 
+      countPagosPendientes = await db.rawQuery('''SELECT pagosPendientes FROM Maquinas 
+      WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
+      [fechaActual, idSitio, nombreTabla]);
+
+      countPagosTotales = await db.rawQuery('''SELECT totalPagos FROM Maquinas 
       WHERE fechaUltimaRec = ? AND idSitio = ? AND nombreTabla = ?''',
       [fechaActual, idSitio, nombreTabla]);
     }
@@ -180,20 +187,31 @@ class DatabaseService {
         total += double.parse(e.values.toString().replaceAll(',', '.').replaceAll('(', '').replaceAll(')', ''));
       }
     }
-    if (countPremiosPendientes.isNotEmpty) {
-      for (var e in countPremiosPendientes) {
-        totalPremiosPendientes += double.parse(e.values.toString().replaceAll(',', '.').replaceAll('(', '').replaceAll(')', ''));
+
+    if (countPagosPendientes.isNotEmpty) {
+      for (var e in countPagosPendientes) {
+        totalPagosPendientes += double.parse(e.values.toString().replaceAll(',', '.').replaceAll('(', '').replaceAll(')', ''));
+      }
+    }
+
+    if (countPagosTotales.isNotEmpty) {
+      for (var e in countPagosTotales) {
+        totalPagosTotales += double.parse(e.values.toString().replaceAll(',', '.').replaceAll('(', '').replaceAll(')', ''));
       }
     }
     valor = total.toStringAsFixed(2).replaceAll('.', ',');
-    valorPremiosPendientes = totalPremiosPendientes.toStringAsFixed(2).replaceAll('.', ',');
+    valorPagosPendientes = totalPagosPendientes.toStringAsFixed(2).replaceAll('.', ',');
+    valorPagosTotales = totalPagosTotales.toStringAsFixed(2).replaceAll('.', ',');
     if (valor.split(',')[1].length == 1) {
       valor += '0';
     }
-    if (valorPremiosPendientes.split(',')[1].length == 1) {
-      valorPremiosPendientes += '0';
+    if (valorPagosPendientes.split(',')[1].length == 1) {
+      valorPagosPendientes += '0';
     }
-    valor = fechaActual + ";" + valor + ";" + valorPremiosPendientes;
+    if (valorPagosTotales.split(',')[1].length == 1) {
+      valorPagosTotales += '0';
+    }
+    valor = fechaActual + ";" + valor + ";" + valorPagosPendientes + ";" + valorPagosTotales;
     if (nombreTabla == "Bares") {
       int updateCount = await db.rawUpdate('''
       UPDATE Bares 
